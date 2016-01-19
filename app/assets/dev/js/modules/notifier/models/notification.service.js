@@ -11,13 +11,19 @@ class NotificationService {
         this._addFakeNotifications();
     }
 
-    getQueue() {
+    getQueue(params = { active: true }) {
         return this.state.queue;
     }
 
     _addFakeNotifications() {
         for (let i = 0; i < 7; i++) {
-            this.state.queue.push(new Notification());
+            this.state.queue.push(new Notification({ state: {
+                from: 'userManagement',
+                category: Notification.CATEGORIES.INFO,
+                header: 'Password expiration',
+                content: 'Your password expires in the next 2 days, please change it using the user management interface.',
+                type: Notification.TYPES.NOTE
+            }}));
         }
     }
 

@@ -52,11 +52,11 @@
 
 	var _angular2 = _interopRequireDefault(_angular);
 
-	var _lodash = __webpack_require__(4);
+	var _lodash = __webpack_require__(3);
 
 	var _lodash2 = _interopRequireDefault(_lodash);
 
-	var _modulesNotifierNotifierModuleJs = __webpack_require__(3);
+	var _modulesNotifierNotifierModuleJs = __webpack_require__(5);
 
 /***/ },
 /* 1 */
@@ -28979,28 +28979,6 @@
 /* 3 */
 /***/ function(module, exports, __webpack_require__) {
 
-	'use strict';
-
-	Object.defineProperty(exports, '__esModule', {
-	  value: true
-	});
-
-	var _controllersNotificationControllerJs = __webpack_require__(6);
-
-	var _modelsNotificationServiceJs = __webpack_require__(9);
-
-	var notifierModule = angular.module('g8.Notifier', []);
-
-	notifierModule.controller('NotificationController', _controllersNotificationControllerJs.NotificationController);
-	notifierModule.factory('NotificationService', _modelsNotificationServiceJs.NotificationService.instanceFactory);
-
-	exports['default'] = notifierModule;
-	exports.notifierModule = notifierModule;
-
-/***/ },
-/* 4 */
-/***/ function(module, exports, __webpack_require__) {
-
 	var __WEBPACK_AMD_DEFINE_RESULT__;/* WEBPACK VAR INJECTION */(function(module, global) {/**
 	 * @license
 	 * lodash 3.10.1 (Custom Build) <https://lodash.com/>
@@ -41353,10 +41331,10 @@
 	  }
 	}.call(this));
 
-	/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(5)(module), (function() { return this; }())))
+	/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(4)(module), (function() { return this; }())))
 
 /***/ },
-/* 5 */
+/* 4 */
 /***/ function(module, exports) {
 
 	module.exports = function(module) {
@@ -41370,6 +41348,28 @@
 		return module;
 	}
 
+
+/***/ },
+/* 5 */
+/***/ function(module, exports, __webpack_require__) {
+
+	'use strict';
+
+	Object.defineProperty(exports, '__esModule', {
+	  value: true
+	});
+
+	var _controllersNotificationControllerJs = __webpack_require__(6);
+
+	var _modelsNotificationServiceJs = __webpack_require__(9);
+
+	var notifierModule = angular.module('g8.Notifier', []);
+
+	notifierModule.controller('NotificationController', _controllersNotificationControllerJs.NotificationController);
+	notifierModule.factory('NotificationService', _modelsNotificationServiceJs.NotificationService.instanceFactory);
+
+	exports['default'] = notifierModule;
+	exports.notifierModule = notifierModule;
 
 /***/ },
 /* 6 */
@@ -41535,13 +41535,21 @@
 	    _createDecoratedClass(NotificationService, [{
 	        key: 'getQueue',
 	        value: function getQueue() {
+	            var params = arguments.length <= 0 || arguments[0] === undefined ? { active: true } : arguments[0];
+
 	            return this.state.queue;
 	        }
 	    }, {
 	        key: '_addFakeNotifications',
 	        value: function _addFakeNotifications() {
 	            for (var i = 0; i < 7; i++) {
-	                this.state.queue.push(new _notificationClassJs.Notification());
+	                this.state.queue.push(new _notificationClassJs.Notification({ state: {
+	                        from: 'userManagement',
+	                        category: _notificationClassJs.Notification.CATEGORIES.INFO,
+	                        header: 'Password expiration',
+	                        content: 'Your password expires in the next 2 days, please change it using the user management interface.',
+	                        type: _notificationClassJs.Notification.TYPES.NOTE
+	                    } }));
 	            }
 	        }
 	    }, {
@@ -41625,6 +41633,15 @@
 	                NOTE: 'note',
 	                OK_CONFIRM: 'ok_confirm',
 	                OK_CANCEL_CONFIRM: 'ok_cancel_confirm'
+	            };
+	        }
+	    }, {
+	        key: 'CATEGORIES',
+	        get: function get() {
+	            return {
+	                INFO: 'info',
+	                WARNING: 'warning',
+	                ERROR: 'error'
 	            };
 	        }
 	    }]);

@@ -15,6 +15,14 @@ class Notification extends Base {
         };
     }
 
+    static get CATEGORIES() {
+        return {
+            INFO: 'info',
+            WARNING: 'warning',
+            ERROR: 'error'
+        };
+    }
+
     static instanceFactory() {
         return new Notification();
     }
