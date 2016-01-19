@@ -1,0 +1,17 @@
+<!DOCTYPE html>
+<html lang="en" ng-strict-di>
+<head>
+    <meta charset="UTF-8">
+    <title>Notifier</title>
+</head>
+<body>
+    <h1>Hello</h1>
+    <div ng-app="g8.Notifier">
+        {{ 1 + 3 }}
+        <div ng-controller="NotificationController">
+            {{ state | json }}
+        </div>
+    </div>
+    <script src="./assets/dist/js/notifier.bundle.js"></script>
+</body>
+</html>
