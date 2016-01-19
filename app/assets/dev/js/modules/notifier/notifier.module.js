@@ -1,3 +1,4 @@
+import 'babel-polyfill';
 import { NotificationController } from './controllers/notification.controller.js';
 import { NotificationService } from './models/notification.service.js';
 
