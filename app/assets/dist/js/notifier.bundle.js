@@ -41394,23 +41394,21 @@
 	var NotificationController = (function (_BaseController) {
 	    _inherits(NotificationController, _BaseController);
 
-	    function NotificationController($scope, $log) {
+	    function NotificationController($scope, $log, NotificationService) {
 	        _classCallCheck(this, _NotificationController);
 
 	        _get(Object.getPrototypeOf(_NotificationController.prototype), 'constructor', this).call(this);
 	        this.injections = {
 	            $scope: $scope,
-	            $log: $log
+	            $log: $log,
+	            NotificationService: NotificationService
 	        };
 	        this._initializeInjections();
-
-	        this.$scope.state = {
-	            message: 'ssss'
-	        };
+	        this.$scope.notificationQueue = NotificationService.getQueue();
 	    }
 
 	    var _NotificationController = NotificationController;
-	    NotificationController = (0, _decoratorsMainDecoratorJs.Inject)('$scope', '$log')(NotificationController) || NotificationController;
+	    NotificationController = (0, _decoratorsMainDecoratorJs.Inject)('$scope', '$log', 'NotificationService')(NotificationController) || NotificationController;
 	    return NotificationController;
 	})(_baseControllerJs.BaseController);
 
@@ -41520,6 +41518,8 @@
 
 	var _decoratorsMainDecoratorJs = __webpack_require__(7);
 
+	var _notificationClassJs = __webpack_require__(10);
+
 	var NotificationService = (function () {
 	    function NotificationService($http) {
 	        _classCallCheck(this, NotificationService);
@@ -41527,9 +41527,31 @@
 	        this.injections = {
 	            $http: $http
 	        };
+
+	        this._initializeState();
+	        this._addFakeNotifications();
 	    }
 
-	    _createDecoratedClass(NotificationService, null, [{
+	    _createDecoratedClass(NotificationService, [{
+	        key: 'getQueue',
+	        value: function getQueue() {
+	            return this.state.queue;
+	        }
+	    }, {
+	        key: '_addFakeNotifications',
+	        value: function _addFakeNotifications() {
+	            for (var i = 0; i < 7; i++) {
+	                this.state.queue.push(new _notificationClassJs.Notification());
+	            }
+	        }
+	    }, {
+	        key: '_initializeState',
+	        value: function _initializeState() {
+	            this.state = _.merge({
+	                queue: []
+	            }, this.state || {});
+	        }
+	    }], [{
 	        key: 'instanceFactory',
 	        decorators: [(0, _decoratorsMainDecoratorJs.Inject)('$http')],
 	        value: function instanceFactory($http) {
@@ -41542,6 +41564,130 @@
 
 	exports['default'] = NotificationService;
 	exports.NotificationService = NotificationService;
+
+/***/ },
+/* 10 */
+/***/ function(module, exports, __webpack_require__) {
+
+	'use strict';
+
+	Object.defineProperty(exports, '__esModule', {
+	    value: true
+	});
+
+	var _createClass = (function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ('value' in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; })();
+
+	var _get = function get(_x2, _x3, _x4) { var _again = true; _function: while (_again) { var object = _x2, property = _x3, receiver = _x4; desc = parent = getter = undefined; _again = false; if (object === null) object = Function.prototype; var desc = Object.getOwnPropertyDescriptor(object, property); if (desc === undefined) { var parent = Object.getPrototypeOf(object); if (parent === null) { return undefined; } else { _x2 = parent; _x3 = property; _x4 = receiver; _again = true; continue _function; } } else if ('value' in desc) { return desc.value; } else { var getter = desc.get; if (getter === undefined) { return undefined; } return getter.call(receiver); } } };
+
+	function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError('Cannot call a class as a function'); } }
+
+	function _inherits(subClass, superClass) { if (typeof superClass !== 'function' && superClass !== null) { throw new TypeError('Super expression must either be null or a function, not ' + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass; }
+
+	var _baseClassJs = __webpack_require__(11);
+
+	var Notification = (function (_Base) {
+	    _inherits(Notification, _Base);
+
+	    function Notification() {
+	        var params = arguments.length <= 0 || arguments[0] === undefined ? { state: {} } : arguments[0];
+
+	        _classCallCheck(this, Notification);
+
+	        _get(Object.getPrototypeOf(Notification.prototype), 'constructor', this).call(this);
+	        this.state = params.state;
+	        this._initializeState();
+	    }
+
+	    _createClass(Notification, [{
+	        key: '_initializeState',
+
+	        // private
+	        value: function _initializeState() {
+	            this.state = _.merge({
+	                id: null,
+	                from: null,
+	                category: null,
+	                type: null,
+	                header: null,
+	                content: null,
+	                showed: false
+	            }, this.state || {});
+	        }
+	    }], [{
+	        key: 'instanceFactory',
+	        value: function instanceFactory() {
+	            return new Notification();
+	        }
+	    }, {
+	        key: 'TYPES',
+	        get: function get() {
+	            return {
+	                NOTE: 'note',
+	                OK_CONFIRM: 'ok_confirm',
+	                OK_CANCEL_CONFIRM: 'ok_cancel_confirm'
+	            };
+	        }
+	    }]);
+
+	    return Notification;
+	})(_baseClassJs.Base);
+
+	exports['default'] = Notification;
+	exports.Notification = Notification;
+
+/***/ },
+/* 11 */
+/***/ function(module, exports) {
+
+	"use strict";
+
+	Object.defineProperty(exports, "__esModule", {
+	    value: true
+	});
+
+	var _createClass = (function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; })();
+
+	function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
+
+	var Base = (function () {
+	    function Base() {
+	        _classCallCheck(this, Base);
+	    }
+
+	    /**
+	     * Helps us to build the properties for object.
+	     * @param {Object} config - properties that should be set up.
+	     * @param {boolean} selfOnly - if we need to iterate only for current instance properties or for config passed.
+	     * @returns {Base} self.
+	     */
+
+	    _createClass(Base, [{
+	        key: "rebuild",
+	        value: function rebuild(config) {
+	            var selfOnly = arguments.length <= 1 || arguments[1] === undefined ? false : arguments[1];
+
+	            var propertiesSet = selfOnly ? this : config;
+
+	            for (var property in propertiesSet) {
+	                if (config.hasOwnProperty(property)) {
+	                    this[property] = config[property];
+	                }
+	            }
+
+	            return this;
+	        }
+	    }], [{
+	        key: "instanceFactory",
+	        value: function instanceFactory() {
+	            return new Base();
+	        }
+	    }]);
+
+	    return Base;
+	})();
+
+	exports["default"] = Base;
+	exports.Base = Base;
 
 /***/ }
 /******/ ]);
