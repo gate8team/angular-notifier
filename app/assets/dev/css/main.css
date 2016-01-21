@@ -1,11 +1,24 @@
 @import url(https://fonts.googleapis.com/css?family=Open+Sans:400,600,700);
+@import url(https://cdnjs.cloudflare.com/ajax/libs/semantic-ui/2.1.8/semantic.min.css);
 
-html, body {
-    font-family: 'Open Sans', sans-serif;
-    font-weight: 300;
-    font-size: 14px;
-}
+/*html, body {*/
+    /*font-family: 'Open Sans', sans-serif;*/
+    /*font-weight: 300;*/
+    /*font-size: 14px;*/
+/*}*/
 
 [ng\:cloak], [ng-cloak], [data-ng-cloak], [x-ng-cloak], .ng-cloak, .x-ng-cloak {
     display: none !important;
+}
+
+.main-content {
+    padding: 15px;
+}
+
+.notifier {}
+
+.notifier.-fixed {
+    position: fixed;
+    bottom: 15px;
+    right: 15px;
 }

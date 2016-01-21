@@ -41365,10 +41365,14 @@
 
 	var _modelsNotificationServiceJs = __webpack_require__(9);
 
+	var _directivesNotifierDirectiveJs = __webpack_require__(202);
+
 	var notifierModule = angular.module('g8.Notifier', []);
 
 	notifierModule.controller('NotificationController', _controllersNotificationControllerJs.NotificationController);
 	notifierModule.factory('NotificationService', _modelsNotificationServiceJs.NotificationService.instanceFactory);
+	notifierModule.controller('NotifierController', _directivesNotifierDirectiveJs.NotifierController);
+	notifierModule.directive('notifier', _directivesNotifierDirectiveJs.NotifierDirective.directiveInstance);
 
 	exports['default'] = notifierModule;
 	exports.notifierModule = notifierModule;
@@ -46970,6 +46974,105 @@
 	};
 	process.umask = function() { return 0; };
 
+
+/***/ },
+/* 202 */
+/***/ function(module, exports, __webpack_require__) {
+
+	'use strict';
+
+	Object.defineProperty(exports, '__esModule', {
+	    value: true
+	});
+
+	var _get = function get(_x2, _x3, _x4) { var _again = true; _function: while (_again) { var object = _x2, property = _x3, receiver = _x4; desc = parent = getter = undefined; _again = false; if (object === null) object = Function.prototype; var desc = Object.getOwnPropertyDescriptor(object, property); if (desc === undefined) { var parent = Object.getPrototypeOf(object); if (parent === null) { return undefined; } else { _x2 = parent; _x3 = property; _x4 = receiver; _again = true; continue _function; } } else if ('value' in desc) { return desc.value; } else { var getter = desc.get; if (getter === undefined) { return undefined; } return getter.call(receiver); } } };
+
+	var _createClass = (function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ('value' in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; })();
+
+	function _inherits(subClass, superClass) { if (typeof superClass !== 'function' && superClass !== null) { throw new TypeError('Super expression must either be null or a function, not ' + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass; }
+
+	function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError('Cannot call a class as a function'); } }
+
+	var _decoratorsMainDecoratorJs = __webpack_require__(7);
+
+	var _controllersBaseControllerJs = __webpack_require__(8);
+
+	var NotifierDirective = (function () {
+	    function NotifierDirective() {
+	        _classCallCheck(this, NotifierDirective);
+
+	        this.templateUrl = '/assets/dev/js/modules/notifier/templates/notifier.html';
+	        this.restrict = 'AE';
+	        this.controller = 'NotifierController';
+	        this.controllerAs = 'notifier';
+	        this.scope = {
+	            notifierQueue: '='
+	        };
+	    }
+
+	    _createClass(NotifierDirective, null, [{
+	        key: 'directiveInstance',
+	        value: function directiveInstance() {
+	            NotifierDirective.instance = new NotifierDirective();
+	            return NotifierDirective.instance;
+	        }
+	    }]);
+
+	    return NotifierDirective;
+	})();
+
+	var NotifierController = (function (_BaseController) {
+	    _inherits(NotifierController, _BaseController);
+
+	    function NotifierController($scope, $log, $parse) {
+	        var _this = this;
+
+	        _classCallCheck(this, _NotifierController);
+
+	        _get(Object.getPrototypeOf(_NotifierController.prototype), 'constructor', this).call(this);
+
+	        this.injections = {
+	            $scope: $scope,
+	            $log: $log,
+	            $parse: $parse
+	        };
+
+	        this.state = { queue: [] };
+
+	        this.watchers = [{ watchFor: function watchFor() {
+	                return _this.injections.$scope.notifierQueue;
+	            }, watchWith: '_notifierQueueWatcher', watchDeep: true }];
+
+	        this._initializeState();
+	        this._initializeWatchers();
+	    }
+
+	    _createClass(NotifierController, [{
+	        key: '_initializeState',
+	        value: function _initializeState() {
+	            var params = arguments.length <= 0 || arguments[0] === undefined ? { queue: [] } : arguments[0];
+
+	            this.state.queue = params.queue;
+	        }
+	    }, {
+	        key: '_notifierQueueWatcher',
+	        value: function _notifierQueueWatcher(context) {
+	            return function (newValue) {
+	                if (newValue != null) {
+	                    context._initializeState({ queue: newValue });
+	                }
+	            };
+	        }
+	    }]);
+
+	    var _NotifierController = NotifierController;
+	    NotifierController = (0, _decoratorsMainDecoratorJs.Inject)('$scope', '$log', '$parse')(NotifierController) || NotifierController;
+	    return NotifierController;
+	})(_controllersBaseControllerJs.BaseController);
+
+	exports['default'] = NotifierDirective;
+	exports.NotifierDirective = NotifierDirective;
+	exports.NotifierController = NotifierController;
 
 /***/ }
 /******/ ]);

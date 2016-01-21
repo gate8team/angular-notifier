@@ -7,12 +7,52 @@
     <link rel="stylesheet" href="./assets/dev/css/main.css">
 </head>
 <body>
-    <h1>Hello</h1>
-    <div ng-app="g8.Notifier">
+    <div ng-app="g8.Notifier" class="main-content">
         <div ng-controller="NotificationController">
-            <pre>
-                {{ notificationQueue | json }}
-            </pre>
+            <div class="ui attached message">
+                <div class="header">
+                    Welcome to angular-notifier!
+                </div>
+                <p>Using this form you can build and test notifications.</p>
+            </div>
+            <form class="ui form attached fluid segment">
+                <div class="two fields">
+                    <div class="field">
+                        <label>Header</label>
+                        <input placeholder="Notification header" type="text">
+                    </div>
+                    <div class="field">
+                        <label>Content</label>
+                        <input placeholder="Notification content" type="text">
+                    </div>
+                </div>
+                <div class="two fields">
+                    <div class="field">
+                        <label>Notification Type</label>
+                        <select class="ui selection dropdown">
+                            <option value="">1</option>
+                            <option value="">2</option>
+                        </select>
+                    </div>
+                    <div class="field">
+                        <label>Notification Category</label>
+                        <select class="ui selection dropdown">
+                            <option value="">1</option>
+                            <option value="">2</option>
+                        </select>
+                    </div>
+                </div>
+                <div class="field">
+                    <label>Notification From</label>
+                    <input placeholder="Notification from" type="text">
+                </div>
+                <div class="ui blue submit button">Try it now</div>
+            </form>
+            <div class="ui bottom attached warning message">
+                <i class="icon help"></i>
+                Have some question? Just <a href="mailto:me.antony.rain@gmail.com">email</a> me.
+            </div>
+            <div notifier="" notifier-queue="notificationQueue"></div>
         </div>
     </div>
     <script src="./assets/dist/js/notifier.bundle.js"></script>
