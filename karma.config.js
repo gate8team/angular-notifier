@@ -6,7 +6,7 @@ module.exports = function(config) {
         ],
         frameworks: ['jasmine'],
         preprocessors: {
-            'webpack/tests-context.js': ['webpack']
+            'app/tests-context.js': ['webpack']
         },
         webpack: {
             module: {
