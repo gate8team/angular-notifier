@@ -2,7 +2,7 @@ import { Inject } from '../decorators/main.decorator.js';
 import { BaseController } from './base.controller.js';
 
 @Inject('$scope', '$log', 'NotificationService')
-class NotificationController extends BaseController {
+class NotificationTestController extends BaseController {
     constructor($scope, $log, NotificationService) {
         super();
         this.injections = {
@@ -15,5 +15,5 @@ class NotificationController extends BaseController {
     }
 }
 
-export default NotificationController;
-export { NotificationController };
+export default NotificationTestController;
+export { NotificationTestController };

@@ -1,16 +1,16 @@
 import 'babel-polyfill';
-import { NotificationController } from './controllers/notification.controller.js';
+import { NotificationTestController } from './controllers/notification-test.controller.js';
 import { NotificationService } from './models/notification.service.js';
 import { NotifierDirective, NotifierController } from './directives/notifier.directive.js';
-import { NotificationDirective, SingleNotificationController } from './directives/notification.directive.js';
+import { NotificationDirective, NotificationController } from './directives/notification.directive.js';
 
 let notifierModule = angular.module('g8.Notifier', []);
 
-notifierModule.controller('NotificationController', NotificationController);
+notifierModule.controller('NotificationTestController', NotificationTestController);
 notifierModule.factory('NotificationService', NotificationService.instanceFactory);
 notifierModule.controller('NotifierController', NotifierController);
 notifierModule.directive('notifier', NotifierDirective.directiveInstance);
-notifierModule.controller('SingleNotificationController', SingleNotificationController);
+notifierModule.controller('NotificationController', NotificationController);
 notifierModule.directive('notification', NotificationDirective.directiveInstance);
 
 export default notifierModule;

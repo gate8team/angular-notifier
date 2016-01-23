@@ -41361,7 +41361,7 @@
 
 	__webpack_require__(6);
 
-	var _controllersNotificationControllerJs = __webpack_require__(196);
+	var _controllersNotificationTestControllerJs = __webpack_require__(196);
 
 	var _modelsNotificationServiceJs = __webpack_require__(199);
 
@@ -41371,11 +41371,11 @@
 
 	var notifierModule = angular.module('g8.Notifier', []);
 
-	notifierModule.controller('NotificationController', _controllersNotificationControllerJs.NotificationController);
+	notifierModule.controller('NotificationTestController', _controllersNotificationTestControllerJs.NotificationTestController);
 	notifierModule.factory('NotificationService', _modelsNotificationServiceJs.NotificationService.instanceFactory);
 	notifierModule.controller('NotifierController', _directivesNotifierDirectiveJs.NotifierController);
 	notifierModule.directive('notifier', _directivesNotifierDirectiveJs.NotifierDirective.directiveInstance);
-	notifierModule.controller('SingleNotificationController', _directivesNotificationDirectiveJs.SingleNotificationController);
+	notifierModule.controller('NotificationController', _directivesNotificationDirectiveJs.NotificationController);
 	notifierModule.directive('notification', _directivesNotificationDirectiveJs.NotificationDirective.directiveInstance);
 
 	exports['default'] = notifierModule;
@@ -46664,13 +46664,13 @@
 
 	var _baseControllerJs = __webpack_require__(198);
 
-	var NotificationController = (function (_BaseController) {
-	    _inherits(NotificationController, _BaseController);
+	var NotificationTestController = (function (_BaseController) {
+	    _inherits(NotificationTestController, _BaseController);
 
-	    function NotificationController($scope, $log, NotificationService) {
-	        _classCallCheck(this, _NotificationController);
+	    function NotificationTestController($scope, $log, NotificationService) {
+	        _classCallCheck(this, _NotificationTestController);
 
-	        _get(Object.getPrototypeOf(_NotificationController.prototype), 'constructor', this).call(this);
+	        _get(Object.getPrototypeOf(_NotificationTestController.prototype), 'constructor', this).call(this);
 	        this.injections = {
 	            $scope: $scope,
 	            $log: $log,
@@ -46680,13 +46680,13 @@
 	        this.$scope.notificationQueue = NotificationService.getQueue();
 	    }
 
-	    var _NotificationController = NotificationController;
-	    NotificationController = (0, _decoratorsMainDecoratorJs.Inject)('$scope', '$log', 'NotificationService')(NotificationController) || NotificationController;
-	    return NotificationController;
+	    var _NotificationTestController = NotificationTestController;
+	    NotificationTestController = (0, _decoratorsMainDecoratorJs.Inject)('$scope', '$log', 'NotificationService')(NotificationTestController) || NotificationTestController;
+	    return NotificationTestController;
 	})(_baseControllerJs.BaseController);
 
-	exports['default'] = NotificationController;
-	exports.NotificationController = NotificationController;
+	exports['default'] = NotificationTestController;
+	exports.NotificationTestController = NotificationTestController;
 
 /***/ },
 /* 197 */
@@ -46813,6 +46813,17 @@
 	            return this.state.queue;
 	        }
 	    }, {
+	        key: 'close',
+	        value: function close() {
+	            var params = arguments.length <= 0 || arguments[0] === undefined ? { notification: null } : arguments[0];
+
+	            this.injections.$http({
+	                url: '/xxx.json',
+	                method: 'PATCH',
+	                data: params
+	            });
+	        }
+	    }, {
 	        key: '_addFakeNotifications',
 	        value: function _addFakeNotifications() {
 	            for (var i = 0; i < 7; i++) {
@@ -46891,7 +46902,8 @@
 	                type: null,
 	                header: null,
 	                content: null,
-	                showed: false
+	                showed: false,
+	                closed: false
 	            }, this.state || {});
 	        }
 	    }], [{
@@ -47088,7 +47100,7 @@
 	    value: true
 	});
 
-	var _get = function get(_x2, _x3, _x4) { var _again = true; _function: while (_again) { var object = _x2, property = _x3, receiver = _x4; desc = parent = getter = undefined; _again = false; if (object === null) object = Function.prototype; var desc = Object.getOwnPropertyDescriptor(object, property); if (desc === undefined) { var parent = Object.getPrototypeOf(object); if (parent === null) { return undefined; } else { _x2 = parent; _x3 = property; _x4 = receiver; _again = true; continue _function; } } else if ('value' in desc) { return desc.value; } else { var getter = desc.get; if (getter === undefined) { return undefined; } return getter.call(receiver); } } };
+	var _get = function get(_x4, _x5, _x6) { var _again = true; _function: while (_again) { var object = _x4, property = _x5, receiver = _x6; desc = parent = getter = undefined; _again = false; if (object === null) object = Function.prototype; var desc = Object.getOwnPropertyDescriptor(object, property); if (desc === undefined) { var parent = Object.getPrototypeOf(object); if (parent === null) { return undefined; } else { _x4 = parent; _x5 = property; _x6 = receiver; _again = true; continue _function; } } else if ('value' in desc) { return desc.value; } else { var getter = desc.get; if (getter === undefined) { return undefined; } return getter.call(receiver); } } };
 
 	var _createClass = (function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ('value' in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; })();
 
@@ -47100,13 +47112,15 @@
 
 	var _controllersBaseControllerJs = __webpack_require__(198);
 
+	var _modelsNotificationClassJs = __webpack_require__(200);
+
 	var NotificationDirective = (function () {
 	    function NotificationDirective() {
 	        _classCallCheck(this, NotificationDirective);
 
 	        this.templateUrl = '/assets/dev/js/modules/notifier/templates/single-notification.html';
 	        this.restrict = 'AE';
-	        this.controller = 'SingleNotificationController';
+	        this.controller = 'NotificationController';
 	        this.controllerAs = 'singleNotification';
 	        this.scope = {
 	            notification: '='
@@ -47124,23 +47138,25 @@
 	    return NotificationDirective;
 	})();
 
-	var SingleNotificationController = (function (_BaseController) {
-	    _inherits(SingleNotificationController, _BaseController);
+	var NotificationController = (function (_BaseController) {
+	    _inherits(NotificationController, _BaseController);
 
-	    function SingleNotificationController($scope, $log, $parse) {
+	    function NotificationController($scope, $log, $parse, $timeout, NotificationService) {
 	        var _this = this;
 
-	        _classCallCheck(this, _SingleNotificationController);
+	        _classCallCheck(this, _NotificationController);
 
-	        _get(Object.getPrototypeOf(_SingleNotificationController.prototype), 'constructor', this).call(this);
+	        _get(Object.getPrototypeOf(_NotificationController.prototype), 'constructor', this).call(this);
 
 	        this.injections = {
 	            $scope: $scope,
 	            $log: $log,
-	            $parse: $parse
+	            $parse: $parse,
+	            $timeout: $timeout,
+	            NotificationService: NotificationService
 	        };
 
-	        this.state = { notification: {} };
+	        this.state = { notification: {}, timeout: null };
 
 	        this.watchers = [{ watchFor: function watchFor() {
 	                return _this.injections.$scope.notification;
@@ -47150,12 +47166,53 @@
 	        this._initializeWatchers();
 	    }
 
-	    _createClass(SingleNotificationController, [{
+	    _createClass(NotificationController, [{
+	        key: 'close',
+	        value: function close() {
+	            var params = arguments.length <= 0 || arguments[0] === undefined ? { notification: null, by: 'user' } : arguments[0];
+
+	            params.notification.state.closed = true;
+	            this.injections.NotificationService.close({
+	                notification: params.notification
+	            });
+	        }
+	    }, {
+	        key: 'resolveNotificationStyle',
+	        value: function resolveNotificationStyle() {
+	            var params = arguments.length <= 0 || arguments[0] === undefined ? { notification: null } : arguments[0];
+
+	            var style = 'floating';
+	            var notificationCategory = (params.notification.state || {}).category;
+
+	            if (notificationCategory == _modelsNotificationClassJs.Notification.CATEGORIES.INFO) {
+	                style = 'info';
+	            } else if (notificationCategory == _modelsNotificationClassJs.Notification.CATEGORIES.WARNING) {
+	                style = 'warning';
+	            } else if (notificationCategory == _modelsNotificationClassJs.Notification.CATEGORIES.ERROR) {
+	                style = 'negative';
+	            }
+
+	            return style;
+	        }
+	    }, {
+	        key: '_killMyself',
+	        value: function _killMyself() {
+	            this.state.timeout = null;
+	            this.close({ notification: this.state.notification, by: 'timeout' });
+	        }
+	    }, {
 	        key: '_initializeState',
 	        value: function _initializeState() {
 	            var params = arguments.length <= 0 || arguments[0] === undefined ? { notification: {} } : arguments[0];
 
 	            this.state.notification = params.notification;
+
+	            // uncomment it if we want to kill notification when some time interval passed
+	            //if (this.state.timeout == null) {
+	            //    this.state.timeout = this.injections.$timeout(() => {
+	            //        this._killMyself();
+	            //    }, 10000);
+	            //}
 	        }
 	    }, {
 	        key: '_notificationWatcher',
@@ -47168,14 +47225,14 @@
 	        }
 	    }]);
 
-	    var _SingleNotificationController = SingleNotificationController;
-	    SingleNotificationController = (0, _decoratorsMainDecoratorJs.Inject)('$scope', '$log', '$parse')(SingleNotificationController) || SingleNotificationController;
-	    return SingleNotificationController;
+	    var _NotificationController = NotificationController;
+	    NotificationController = (0, _decoratorsMainDecoratorJs.Inject)('$scope', '$log', '$parse', '$timeout', 'NotificationService')(NotificationController) || NotificationController;
+	    return NotificationController;
 	})(_controllersBaseControllerJs.BaseController);
 
 	exports['default'] = NotificationDirective;
 	exports.NotificationDirective = NotificationDirective;
-	exports.SingleNotificationController = SingleNotificationController;
+	exports.NotificationController = NotificationController;
 
 /***/ }
 /******/ ]);
