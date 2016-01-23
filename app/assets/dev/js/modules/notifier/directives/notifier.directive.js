@@ -2,8 +2,9 @@ import { Inject } from '../decorators/main.decorator.js';
 import { BaseController } from '../controllers/base.controller.js';
 
 class NotifierDirective {
-    constructor() {
-        this.templateUrl = '/assets/dev/js/modules/notifier/templates/notifier.html';
+    constructor($templateCache) {
+        //this.templateUrl = '/assets/dev/js/modules/notifier/templates/notifier.html';
+        this.template = $templateCache.get('/assets/dev/js/modules/notifier/templates/notifier.html');
         this.restrict = 'AE';
         this.controller = 'NotifierController';
         this.controllerAs = 'notifier';
@@ -12,8 +13,9 @@ class NotifierDirective {
         };
     }
 
-    static directiveInstance() {
-        NotifierDirective.instance = new NotifierDirective();
+    @Inject('$templateCache')
+    static directiveInstance($templateCache) {
+        NotifierDirective.instance = new NotifierDirective($templateCache);
         return NotifierDirective.instance;
     }
 }

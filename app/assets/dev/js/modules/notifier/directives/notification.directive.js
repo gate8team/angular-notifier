@@ -3,8 +3,9 @@ import { BaseController } from '../controllers/base.controller.js';
 import { Notification } from '../models/notification.class.js';
 
 class NotificationDirective {
-    constructor() {
-        this.templateUrl = '/assets/dev/js/modules/notifier/templates/single-notification.html';
+    constructor($templateCache) {
+        //this.templateUrl = '/assets/dev/js/modules/notifier/templates/single-notification.html';
+        this.template = $templateCache.get('/assets/dev/js/modules/notifier/templates/single-notification.html');
         this.restrict = 'AE';
         this.controller = 'NotificationController';
         this.controllerAs = 'singleNotification';
@@ -13,8 +14,9 @@ class NotificationDirective {
         };
     }
 
-    static directiveInstance() {
-        NotificationDirective.instance = new NotificationDirective();
+    @Inject('$templateCache')
+    static directiveInstance($templateCache) {
+        NotificationDirective.instance = new NotificationDirective($templateCache);
         return NotificationDirective.instance;
     }
 }

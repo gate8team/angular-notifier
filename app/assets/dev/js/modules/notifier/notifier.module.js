@@ -13,5 +13,44 @@ notifierModule.directive('notifier', NotifierDirective.directiveInstance);
 notifierModule.controller('NotificationController', NotificationController);
 notifierModule.directive('notification', NotificationDirective.directiveInstance);
 
+//notifierModule.run(['$http', '$templateCache', ($http, $templateCache) => {
+//    let templatesToCache = [
+//        '/assets/dev/js/modules/notifier/templates/single-notification.html',
+//        '/assets/dev/js/modules/notifier/templates/notifier.html'
+//    ];
+//    _.each(templatesToCache, (templateUrl) => {
+//        $http.get(templateUrl).then((response) => {
+//            let template = response.data;
+//            $templateCache.put(templateUrl, template);
+//        });
+//    });
+//}]);
+
+notifierModule.run(['$templateCache', ($templateCache) => {
+    let templatesToCache = [
+        {
+            name: '/assets/dev/js/modules/notifier/templates/single-notification.html',
+            template: `<div class="ui message" ng-class="[singleNotification.resolveNotificationStyle({ notification: singleNotification.state.notification })]">
+                            <i class="close icon" ng-click="singleNotification.close({ notification: singleNotification.state.notification })"></i>
+                            <div class="header notification-header">
+                                {{ singleNotification.state.notification.state.header }}
+                            </div>
+                            <p class="notification-content">{{ singleNotification.state.notification.state.content }}</p>
+                        </div>`
+        },
+        {
+            name: '/assets/dev/js/modules/notifier/templates/notifier.html',
+            template: `<div ng-cloak="" class="notifier -fixed">
+                            <div ng-repeat="notification in notifier.state.queue" ng-if="!notification.state.closed">
+                                <div class="notification -single" notification="notification"></div>
+                            </div>
+                       </div>`
+        }
+    ];
+    _.each(templatesToCache, (cache) => {
+        $templateCache.put(cache.name, cache.template);
+    });
+}]);
+
 export default notifierModule;
 export { notifierModule };
