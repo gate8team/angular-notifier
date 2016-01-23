@@ -41356,7 +41356,7 @@
 	'use strict';
 
 	Object.defineProperty(exports, '__esModule', {
-	  value: true
+	    value: true
 	});
 
 	__webpack_require__(6);
@@ -41377,6 +41377,32 @@
 	notifierModule.directive('notifier', _directivesNotifierDirectiveJs.NotifierDirective.directiveInstance);
 	notifierModule.controller('NotificationController', _directivesNotificationDirectiveJs.NotificationController);
 	notifierModule.directive('notification', _directivesNotificationDirectiveJs.NotificationDirective.directiveInstance);
+
+	//notifierModule.run(['$http', '$templateCache', ($http, $templateCache) => {
+	//    let templatesToCache = [
+	//        '/assets/dev/js/modules/notifier/templates/single-notification.html',
+	//        '/assets/dev/js/modules/notifier/templates/notifier.html'
+	//    ];
+	//    _.each(templatesToCache, (templateUrl) => {
+	//        $http.get(templateUrl).then((response) => {
+	//            let template = response.data;
+	//            $templateCache.put(templateUrl, template);
+	//        });
+	//    });
+	//}]);
+
+	notifierModule.run(['$templateCache', function ($templateCache) {
+	    var templatesToCache = [{
+	        name: '/assets/dev/js/modules/notifier/templates/single-notification.html',
+	        template: '<div class="ui message" ng-class="[singleNotification.resolveNotificationStyle({ notification: singleNotification.state.notification })]">\n                            <i class="close icon" ng-click="singleNotification.close({ notification: singleNotification.state.notification })"></i>\n                            <div class="header notification-header">\n                                {{ singleNotification.state.notification.state.header }}\n                            </div>\n                            <p class="notification-content">{{ singleNotification.state.notification.state.content }}</p>\n                        </div>'
+	    }, {
+	        name: '/assets/dev/js/modules/notifier/templates/notifier.html',
+	        template: '<div ng-cloak="" class="notifier -fixed">\n                            <div ng-repeat="notification in notifier.state.queue" ng-if="!notification.state.closed">\n                                <div class="notification -single" notification="notification"></div>\n                            </div>\n                       </div>'
+	    }];
+	    _.each(templatesToCache, function (cache) {
+	        $templateCache.put(cache.name, cache.template);
+	    });
+	}]);
 
 	exports['default'] = notifierModule;
 	exports.notifierModule = notifierModule;
@@ -47001,9 +47027,11 @@
 	    value: true
 	});
 
+	var _createClass = (function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ('value' in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; })();
+
 	var _get = function get(_x2, _x3, _x4) { var _again = true; _function: while (_again) { var object = _x2, property = _x3, receiver = _x4; desc = parent = getter = undefined; _again = false; if (object === null) object = Function.prototype; var desc = Object.getOwnPropertyDescriptor(object, property); if (desc === undefined) { var parent = Object.getPrototypeOf(object); if (parent === null) { return undefined; } else { _x2 = parent; _x3 = property; _x4 = receiver; _again = true; continue _function; } } else if ('value' in desc) { return desc.value; } else { var getter = desc.get; if (getter === undefined) { return undefined; } return getter.call(receiver); } } };
 
-	var _createClass = (function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ('value' in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; })();
+	var _createDecoratedClass = (function () { function defineProperties(target, descriptors, initializers) { for (var i = 0; i < descriptors.length; i++) { var descriptor = descriptors[i]; var decorators = descriptor.decorators; var key = descriptor.key; delete descriptor.key; delete descriptor.decorators; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ('value' in descriptor || descriptor.initializer) descriptor.writable = true; if (decorators) { for (var f = 0; f < decorators.length; f++) { var decorator = decorators[f]; if (typeof decorator === 'function') { descriptor = decorator(target, key, descriptor) || descriptor; } else { throw new TypeError('The decorator for method ' + descriptor.key + ' is of the invalid type ' + typeof decorator); } } if (descriptor.initializer !== undefined) { initializers[key] = descriptor; continue; } } Object.defineProperty(target, key, descriptor); } } return function (Constructor, protoProps, staticProps, protoInitializers, staticInitializers) { if (protoProps) defineProperties(Constructor.prototype, protoProps, protoInitializers); if (staticProps) defineProperties(Constructor, staticProps, staticInitializers); return Constructor; }; })();
 
 	function _inherits(subClass, superClass) { if (typeof superClass !== 'function' && superClass !== null) { throw new TypeError('Super expression must either be null or a function, not ' + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass; }
 
@@ -47014,10 +47042,11 @@
 	var _controllersBaseControllerJs = __webpack_require__(198);
 
 	var NotifierDirective = (function () {
-	    function NotifierDirective() {
+	    function NotifierDirective($templateCache) {
 	        _classCallCheck(this, NotifierDirective);
 
-	        this.templateUrl = '/assets/dev/js/modules/notifier/templates/notifier.html';
+	        //this.templateUrl = '/assets/dev/js/modules/notifier/templates/notifier.html';
+	        this.template = $templateCache.get('/assets/dev/js/modules/notifier/templates/notifier.html');
 	        this.restrict = 'AE';
 	        this.controller = 'NotifierController';
 	        this.controllerAs = 'notifier';
@@ -47026,10 +47055,11 @@
 	        };
 	    }
 
-	    _createClass(NotifierDirective, null, [{
+	    _createDecoratedClass(NotifierDirective, null, [{
 	        key: 'directiveInstance',
-	        value: function directiveInstance() {
-	            NotifierDirective.instance = new NotifierDirective();
+	        decorators: [(0, _decoratorsMainDecoratorJs.Inject)('$templateCache')],
+	        value: function directiveInstance($templateCache) {
+	            NotifierDirective.instance = new NotifierDirective($templateCache);
 	            return NotifierDirective.instance;
 	        }
 	    }]);
@@ -47100,9 +47130,11 @@
 	    value: true
 	});
 
+	var _createClass = (function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ('value' in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; })();
+
 	var _get = function get(_x4, _x5, _x6) { var _again = true; _function: while (_again) { var object = _x4, property = _x5, receiver = _x6; desc = parent = getter = undefined; _again = false; if (object === null) object = Function.prototype; var desc = Object.getOwnPropertyDescriptor(object, property); if (desc === undefined) { var parent = Object.getPrototypeOf(object); if (parent === null) { return undefined; } else { _x4 = parent; _x5 = property; _x6 = receiver; _again = true; continue _function; } } else if ('value' in desc) { return desc.value; } else { var getter = desc.get; if (getter === undefined) { return undefined; } return getter.call(receiver); } } };
 
-	var _createClass = (function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ('value' in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; })();
+	var _createDecoratedClass = (function () { function defineProperties(target, descriptors, initializers) { for (var i = 0; i < descriptors.length; i++) { var descriptor = descriptors[i]; var decorators = descriptor.decorators; var key = descriptor.key; delete descriptor.key; delete descriptor.decorators; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ('value' in descriptor || descriptor.initializer) descriptor.writable = true; if (decorators) { for (var f = 0; f < decorators.length; f++) { var decorator = decorators[f]; if (typeof decorator === 'function') { descriptor = decorator(target, key, descriptor) || descriptor; } else { throw new TypeError('The decorator for method ' + descriptor.key + ' is of the invalid type ' + typeof decorator); } } if (descriptor.initializer !== undefined) { initializers[key] = descriptor; continue; } } Object.defineProperty(target, key, descriptor); } } return function (Constructor, protoProps, staticProps, protoInitializers, staticInitializers) { if (protoProps) defineProperties(Constructor.prototype, protoProps, protoInitializers); if (staticProps) defineProperties(Constructor, staticProps, staticInitializers); return Constructor; }; })();
 
 	function _inherits(subClass, superClass) { if (typeof superClass !== 'function' && superClass !== null) { throw new TypeError('Super expression must either be null or a function, not ' + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass; }
 
@@ -47115,10 +47147,11 @@
 	var _modelsNotificationClassJs = __webpack_require__(200);
 
 	var NotificationDirective = (function () {
-	    function NotificationDirective() {
+	    function NotificationDirective($templateCache) {
 	        _classCallCheck(this, NotificationDirective);
 
-	        this.templateUrl = '/assets/dev/js/modules/notifier/templates/single-notification.html';
+	        //this.templateUrl = '/assets/dev/js/modules/notifier/templates/single-notification.html';
+	        this.template = $templateCache.get('/assets/dev/js/modules/notifier/templates/single-notification.html');
 	        this.restrict = 'AE';
 	        this.controller = 'NotificationController';
 	        this.controllerAs = 'singleNotification';
@@ -47127,10 +47160,11 @@
 	        };
 	    }
 
-	    _createClass(NotificationDirective, null, [{
+	    _createDecoratedClass(NotificationDirective, null, [{
 	        key: 'directiveInstance',
-	        value: function directiveInstance() {
-	            NotificationDirective.instance = new NotificationDirective();
+	        decorators: [(0, _decoratorsMainDecoratorJs.Inject)('$templateCache')],
+	        value: function directiveInstance($templateCache) {
+	            NotificationDirective.instance = new NotificationDirective($templateCache);
 	            return NotificationDirective.instance;
 	        }
 	    }]);

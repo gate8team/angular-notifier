@@ -1,7 +1,7 @@
 <div class="ui message" ng-class="[singleNotification.resolveNotificationStyle({ notification: singleNotification.state.notification })]">
     <i class="close icon" ng-click="singleNotification.close({ notification: singleNotification.state.notification })"></i>
-    <div class="header">
+    <div class="header notification-header">
         {{ singleNotification.state.notification.state.header }}
     </div>
-    <p>{{ singleNotification.state.notification.state.content }}</p>
+    <p class="notification-content">{{ singleNotification.state.notification.state.content }}</p>
 </div>
