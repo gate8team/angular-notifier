@@ -41363,9 +41363,9 @@
 
 	var _controllersNotificationTestControllerJs = __webpack_require__(196);
 
-	var _modelsNotificationServiceJs = __webpack_require__(199);
+	var _modelsNotificationServiceJs = __webpack_require__(197);
 
-	var _directivesNotifierDirectiveJs = __webpack_require__(202);
+	var _directivesNotifierDirectiveJs = __webpack_require__(201);
 
 	var _directivesNotificationDirectiveJs = __webpack_require__(203);
 
@@ -46680,15 +46680,19 @@
 	    value: true
 	});
 
-	var _get = function get(_x, _x2, _x3) { var _again = true; _function: while (_again) { var object = _x, property = _x2, receiver = _x3; desc = parent = getter = undefined; _again = false; if (object === null) object = Function.prototype; var desc = Object.getOwnPropertyDescriptor(object, property); if (desc === undefined) { var parent = Object.getPrototypeOf(object); if (parent === null) { return undefined; } else { _x = parent; _x2 = property; _x3 = receiver; _again = true; continue _function; } } else if ('value' in desc) { return desc.value; } else { var getter = desc.get; if (getter === undefined) { return undefined; } return getter.call(receiver); } } };
+	var _createClass = (function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ('value' in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; })();
+
+	var _get = function get(_x2, _x3, _x4) { var _again = true; _function: while (_again) { var object = _x2, property = _x3, receiver = _x4; desc = parent = getter = undefined; _again = false; if (object === null) object = Function.prototype; var desc = Object.getOwnPropertyDescriptor(object, property); if (desc === undefined) { var parent = Object.getPrototypeOf(object); if (parent === null) { return undefined; } else { _x2 = parent; _x3 = property; _x4 = receiver; _again = true; continue _function; } } else if ('value' in desc) { return desc.value; } else { var getter = desc.get; if (getter === undefined) { return undefined; } return getter.call(receiver); } } };
 
 	function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError('Cannot call a class as a function'); } }
 
 	function _inherits(subClass, superClass) { if (typeof superClass !== 'function' && superClass !== null) { throw new TypeError('Super expression must either be null or a function, not ' + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass; }
 
-	var _decoratorsMainDecoratorJs = __webpack_require__(197);
+	var _decoratorsMainDecoratorJs = __webpack_require__(198);
 
-	var _baseControllerJs = __webpack_require__(198);
+	var _baseControllerJs = __webpack_require__(202);
+
+	var _modelsNotificationClassJs = __webpack_require__(199);
 
 	var NotificationTestController = (function (_BaseController) {
 	    _inherits(NotificationTestController, _BaseController);
@@ -46702,9 +46706,27 @@
 	            $log: $log,
 	            NotificationService: NotificationService
 	        };
+	        this.state = {
+	            notification: {
+	                from: null,
+	                category: _modelsNotificationClassJs.Notification.CATEGORIES.INFO,
+	                header: null,
+	                content: null,
+	                type: _modelsNotificationClassJs.Notification.TYPES.NOTE
+	            }
+	        };
 	        this._initializeInjections();
 	        this.$scope.notificationQueue = NotificationService.getQueue();
 	    }
+
+	    _createClass(NotificationTestController, [{
+	        key: 'addNotificationToQueue',
+	        value: function addNotificationToQueue() {
+	            var params = arguments.length <= 0 || arguments[0] === undefined ? { notification: {} } : arguments[0];
+
+	            this.injections.NotificationService.addNotification({ notification: params.notification });
+	        }
+	    }]);
 
 	    var _NotificationTestController = NotificationTestController;
 	    NotificationTestController = (0, _decoratorsMainDecoratorJs.Inject)('$scope', '$log', 'NotificationService')(NotificationTestController) || NotificationTestController;
@@ -46716,93 +46738,6 @@
 
 /***/ },
 /* 197 */
-/***/ function(module, exports) {
-
-	"use strict";
-
-	Object.defineProperty(exports, "__esModule", {
-	    value: true
-	});
-	function Inject() {
-	    for (var _len = arguments.length, dependencies = Array(_len), _key = 0; _key < _len; _key++) {
-	        dependencies[_key] = arguments[_key];
-	    }
-
-	    return function decorator(target, key, descriptor) {
-	        // if it's true then we injecting dependencies into function and not Class constructor
-	        if (descriptor) {
-	            var fn = descriptor.value;
-	            fn.$inject = dependencies;
-	        } else {
-	            target.$inject = dependencies;
-	        }
-	    };
-	}
-
-	exports.Inject = Inject;
-
-/***/ },
-/* 198 */
-/***/ function(module, exports) {
-
-	"use strict";
-
-	Object.defineProperty(exports, "__esModule", {
-	    value: true
-	});
-
-	var _createClass = (function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; })();
-
-	function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
-
-	var BaseController = (function () {
-	    function BaseController() {
-	        _classCallCheck(this, BaseController);
-
-	        this.watchers = [];
-	    }
-
-	    _createClass(BaseController, [{
-	        key: "_initializeWatchers",
-	        value: function _initializeWatchers() {
-	            var _this = this;
-
-	            _.each(this.watchers, function (instance) {
-	                if (_.isFunction(instance.watchFor)) {
-	                    _this.watchers.push(!!instance.watchDeep ? _this.injections.$scope.$watch(instance.watchFor, _this[instance.watchWith](_this), true) : _this.injections.$scope.$watch(instance.watchFor, _this[instance.watchWith](_this)));
-	                } else {
-	                    _this.watchers.push(!!instance.watchDeep ? _this.injections.$scope.$watch(function () {
-	                        return _this.injections.$parse(instance.watchFor)(_this);
-	                    }, _this[instance.watchWith](_this), true) : _this.injections.$scope.$watch(function () {
-	                        return _this.injections.$parse(instance.watchFor)(_this);
-	                    }, _this[instance.watchWith](_this)));
-	                }
-	            });
-	        }
-
-	        /**
-	         * Simply makes links to injections inside the injection variable of the instance.
-	         * @private
-	         */
-	    }, {
-	        key: "_initializeInjections",
-	        value: function _initializeInjections() {
-	            for (var injection in this.injections) {
-	                if (this.injections.hasOwnProperty(injection)) {
-	                    this[injection] = this.injections[injection];
-	                }
-	            }
-	        }
-	    }]);
-
-	    return BaseController;
-	})();
-
-	exports["default"] = BaseController;
-	exports.BaseController = BaseController;
-
-/***/ },
-/* 199 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -46815,9 +46750,9 @@
 
 	function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError('Cannot call a class as a function'); } }
 
-	var _decoratorsMainDecoratorJs = __webpack_require__(197);
+	var _decoratorsMainDecoratorJs = __webpack_require__(198);
 
-	var _notificationClassJs = __webpack_require__(200);
+	var _notificationClassJs = __webpack_require__(199);
 
 	var NotificationService = (function () {
 	    function NotificationService($http) {
@@ -46850,9 +46785,22 @@
 	            });
 	        }
 	    }, {
+	        key: 'addNotification',
+	        value: function addNotification() {
+	            var params = arguments.length <= 0 || arguments[0] === undefined ? { notification: null } : arguments[0];
+
+	            var notification = params.notification;
+
+	            if (!(params.notification instanceof _notificationClassJs.Notification)) {
+	                notification = new _notificationClassJs.Notification({ state: notification });
+	            }
+
+	            this.state.queue.push(notification);
+	        }
+	    }, {
 	        key: '_addFakeNotifications',
 	        value: function _addFakeNotifications() {
-	            for (var i = 0; i < 7; i++) {
+	            for (var i = 0; i < 3; i++) {
 	                this.state.queue.push(new _notificationClassJs.Notification({ state: {
 	                        from: 'userManagement',
 	                        category: _notificationClassJs.Notification.CATEGORIES.INFO,
@@ -46884,7 +46832,34 @@
 	exports.NotificationService = NotificationService;
 
 /***/ },
-/* 200 */
+/* 198 */
+/***/ function(module, exports) {
+
+	"use strict";
+
+	Object.defineProperty(exports, "__esModule", {
+	    value: true
+	});
+	function Inject() {
+	    for (var _len = arguments.length, dependencies = Array(_len), _key = 0; _key < _len; _key++) {
+	        dependencies[_key] = arguments[_key];
+	    }
+
+	    return function decorator(target, key, descriptor) {
+	        // if it's true then we injecting dependencies into function and not Class constructor
+	        if (descriptor) {
+	            var fn = descriptor.value;
+	            fn.$inject = dependencies;
+	        } else {
+	            target.$inject = dependencies;
+	        }
+	    };
+	}
+
+	exports.Inject = Inject;
+
+/***/ },
+/* 199 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -46901,7 +46876,7 @@
 
 	function _inherits(subClass, superClass) { if (typeof superClass !== 'function' && superClass !== null) { throw new TypeError('Super expression must either be null or a function, not ' + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass; }
 
-	var _baseClassJs = __webpack_require__(201);
+	var _baseClassJs = __webpack_require__(200);
 
 	var Notification = (function (_Base) {
 	    _inherits(Notification, _Base);
@@ -46964,7 +46939,7 @@
 	exports.Notification = Notification;
 
 /***/ },
-/* 201 */
+/* 200 */
 /***/ function(module, exports) {
 
 	"use strict";
@@ -47018,7 +46993,7 @@
 	exports.Base = Base;
 
 /***/ },
-/* 202 */
+/* 201 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -47037,9 +47012,9 @@
 
 	function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError('Cannot call a class as a function'); } }
 
-	var _decoratorsMainDecoratorJs = __webpack_require__(197);
+	var _decoratorsMainDecoratorJs = __webpack_require__(198);
 
-	var _controllersBaseControllerJs = __webpack_require__(198);
+	var _controllersBaseControllerJs = __webpack_require__(202);
 
 	var NotifierDirective = (function () {
 	    function NotifierDirective($templateCache) {
@@ -47121,6 +47096,66 @@
 	exports.NotifierController = NotifierController;
 
 /***/ },
+/* 202 */
+/***/ function(module, exports) {
+
+	"use strict";
+
+	Object.defineProperty(exports, "__esModule", {
+	    value: true
+	});
+
+	var _createClass = (function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; })();
+
+	function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
+
+	var BaseController = (function () {
+	    function BaseController() {
+	        _classCallCheck(this, BaseController);
+
+	        this.watchers = [];
+	    }
+
+	    _createClass(BaseController, [{
+	        key: "_initializeWatchers",
+	        value: function _initializeWatchers() {
+	            var _this = this;
+
+	            _.each(this.watchers, function (instance) {
+	                if (_.isFunction(instance.watchFor)) {
+	                    _this.watchers.push(!!instance.watchDeep ? _this.injections.$scope.$watch(instance.watchFor, _this[instance.watchWith](_this), true) : _this.injections.$scope.$watch(instance.watchFor, _this[instance.watchWith](_this)));
+	                } else {
+	                    _this.watchers.push(!!instance.watchDeep ? _this.injections.$scope.$watch(function () {
+	                        return _this.injections.$parse(instance.watchFor)(_this);
+	                    }, _this[instance.watchWith](_this), true) : _this.injections.$scope.$watch(function () {
+	                        return _this.injections.$parse(instance.watchFor)(_this);
+	                    }, _this[instance.watchWith](_this)));
+	                }
+	            });
+	        }
+
+	        /**
+	         * Simply makes links to injections inside the injection variable of the instance.
+	         * @private
+	         */
+	    }, {
+	        key: "_initializeInjections",
+	        value: function _initializeInjections() {
+	            for (var injection in this.injections) {
+	                if (this.injections.hasOwnProperty(injection)) {
+	                    this[injection] = this.injections[injection];
+	                }
+	            }
+	        }
+	    }]);
+
+	    return BaseController;
+	})();
+
+	exports["default"] = BaseController;
+	exports.BaseController = BaseController;
+
+/***/ },
 /* 203 */
 /***/ function(module, exports, __webpack_require__) {
 
@@ -47140,11 +47175,11 @@
 
 	function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError('Cannot call a class as a function'); } }
 
-	var _decoratorsMainDecoratorJs = __webpack_require__(197);
+	var _decoratorsMainDecoratorJs = __webpack_require__(198);
 
-	var _controllersBaseControllerJs = __webpack_require__(198);
+	var _controllersBaseControllerJs = __webpack_require__(202);
 
-	var _modelsNotificationClassJs = __webpack_require__(200);
+	var _modelsNotificationClassJs = __webpack_require__(199);
 
 	var NotificationDirective = (function () {
 	    function NotificationDirective($templateCache) {

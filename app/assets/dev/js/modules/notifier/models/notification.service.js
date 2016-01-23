@@ -23,8 +23,18 @@ class NotificationService {
         });
     }
 
+    addNotification(params = { notification: null }) {
+        let notification = params.notification;
+
+        if (!(params.notification instanceof Notification)) {
+            notification = new Notification({ state: notification });
+        }
+
+        this.state.queue.push(notification);
+    }
+
     _addFakeNotifications() {
-        for (let i = 0; i < 7; i++) {
+        for (let i = 0; i < 3; i++) {
             this.state.queue.push(new Notification({ state: {
                 from: 'userManagement',
                 category: Notification.CATEGORIES.INFO,

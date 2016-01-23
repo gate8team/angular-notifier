@@ -8,35 +8,35 @@
 </head>
 <body>
     <div ng-app="g8.Notifier" class="main-content">
-        <div ng-controller="NotificationTestController">
+        <div ng-controller="NotificationTestController as notificationTest">
             <div class="ui attached message">
                 <div class="header">
                     Welcome to angular-notifier!
                 </div>
                 <p>Using this form you can build and test notifications.</p>
             </div>
-            <form class="ui form attached fluid segment">
+            <form name="notificationTestForm" class="ui form attached fluid segment" ng-submit="notificationTest.addNotificationToQueue({ notification: notificationTest.state.notification })">
                 <div class="two fields">
                     <div class="field">
                         <label>Header</label>
-                        <input placeholder="Notification header" type="text">
+                        <input placeholder="Notification header" type="text" ng-model="notificationTest.state.notification.header" required>
                     </div>
                     <div class="field">
                         <label>Content</label>
-                        <input placeholder="Notification content" type="text">
+                        <input placeholder="Notification content" type="text" ng-model="notificationTest.state.notification.content" required>
                     </div>
                 </div>
                 <div class="two fields">
                     <div class="field">
                         <label>Notification Type</label>
-                        <select class="ui selection dropdown">
+                        <select class="ui selection dropdown" ng-model="notificationTest.state.notification.type">
                             <option value="">1</option>
                             <option value="">2</option>
                         </select>
                     </div>
                     <div class="field">
                         <label>Notification Category</label>
-                        <select class="ui selection dropdown">
+                        <select class="ui selection dropdown" ng-model="notificationTest.state.notification.category">
                             <option value="">1</option>
                             <option value="">2</option>
                         </select>
@@ -44,9 +44,9 @@
                 </div>
                 <div class="field">
                     <label>Notification From</label>
-                    <input placeholder="Notification from" type="text">
+                    <input placeholder="Notification from" type="text" ng-model="notificationTest.state.notification.from" required>
                 </div>
-                <div class="ui blue submit button">Try it now</div>
+                <input type="submit" class="ui blue submit button" value="Try it now" ng-disabled="notificationTestForm.$invalid">
             </form>
             <div class="ui bottom attached warning message">
                 <i class="icon help"></i>
