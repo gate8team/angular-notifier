@@ -1,9 +1,5 @@
 <div ng-cloak="" class="notifier -fixed">
-    <div class="ui success message" ng-repeat="notification in notifier.state.queue">
-        <i class="close icon"></i>
-        <div class="header">
-            {{ notification.state.header }}
-        </div>
-        <p>{{ notification.state.content }}</p>
+    <div ng-repeat="notification in notifier.state.queue">
+        <div class="notification -single" notification="notification"></div>
     </div>
 </div>
