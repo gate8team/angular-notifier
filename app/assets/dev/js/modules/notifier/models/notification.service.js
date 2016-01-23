@@ -15,6 +15,14 @@ class NotificationService {
         return this.state.queue;
     }
 
+    close(params = { notification: null }) {
+        this.injections.$http({
+            url: '/xxx.json',
+            method: 'PATCH',
+            data: params
+        });
+    }
+
     _addFakeNotifications() {
         for (let i = 0; i < 7; i++) {
             this.state.queue.push(new Notification({ state: {

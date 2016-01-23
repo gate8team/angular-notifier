@@ -36,7 +36,8 @@ class Notification extends Base {
             type: null,
             header: null,
             content: null,
-            showed: false
+            showed: false,
+            closed: false
         }, this.state || {});
     }
 }
