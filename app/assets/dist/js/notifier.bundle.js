@@ -41394,7 +41394,7 @@
 	notifierModule.run(['$templateCache', function ($templateCache) {
 	    var templatesToCache = [{
 	        name: '/assets/dev/js/modules/notifier/templates/single-notification.html',
-	        template: '<div class="ui message" ng-class="[singleNotification.resolveNotificationStyle({ notification: singleNotification.state.notification })]">\n                            <i class="close icon" ng-click="singleNotification.close({ notification: singleNotification.state.notification })"></i>\n                            <div class="header notification-header">\n                                {{ singleNotification.state.notification.state.header }}\n                            </div>\n                            <p class="notification-content">{{ singleNotification.state.notification.state.content }}</p>\n                            <div ng-if="singleNotification.state.notification.state.type != \'note\'">\n                                <button class="mini ui green button">Okay</button>\n                                <button class="mini ui red button"\n                                        ng-if="singleNotification.state.notification.state.type == \'ok_cancel_confirm\'">Cancel</button>\n                                <button class="mini ui blue button">Confirm</button>\n                            </div>\n                        </div>'
+	        template: '<div class="ui message" ng-class="[singleNotification.resolveNotificationStyle({ notification: singleNotification.state.notification })]">\n                            <i class="close icon" ng-click="singleNotification.close({ notification: singleNotification.state.notification })"></i>\n                            <div class="header notification-header">\n                                {{ singleNotification.state.notification.state.header }}\n                            </div>\n                            <p class="notification-content">{{ singleNotification.state.notification.state.content }}</p>\n                            <div ng-if="singleNotification.state.notification.state.type != \'note\'">\n                                <button class="mini ui green button notification-okay"\n                                        ng-click="singleNotification.respondWith({ action: \'okay\', notification: singleNotification.state.notification })">Okay</button>\n                                <button class="mini ui red button notification-cancel-confirm"\n                                        ng-if="singleNotification.state.notification.state.type == \'ok_cancel_confirm\'"\n                                        ng-click="singleNotification.respondWith({ action: \'cancel\', notification: singleNotification.state.notification })">Cancel</button>\n                                <button class="mini ui blue button notification-confirm"\n                                        ng-click="singleNotification.respondWith({ action: \'confirm\', notification: singleNotification.state.notification })">Confirm</button>\n                            </div>\n                        </div>'
 	    }, {
 	        name: '/assets/dev/js/modules/notifier/templates/notifier.html',
 	        template: '<div ng-cloak="" class="notifier -fixed">\n                            <div ng-repeat="notification in notifier.state.queue" ng-if="!notification.state.closed">\n                                <div class="notification -single" notification="notification"></div>\n                            </div>\n                       </div>'
@@ -46780,9 +46780,20 @@
 	        value: function close() {
 	            var params = arguments.length <= 0 || arguments[0] === undefined ? { notification: null } : arguments[0];
 
-	            this.injections.$http({
-	                url: '/xxx.json',
-	                method: 'PATCH',
+	            return this.injections.$http({
+	                url: '/notifications.json',
+	                method: 'PUT',
+	                data: params
+	            });
+	        }
+	    }, {
+	        key: 'respondWith',
+	        value: function respondWith() {
+	            var params = arguments.length <= 0 || arguments[0] === undefined ? { notification: null, action: null } : arguments[0];
+
+	            return this.injections.$http({
+	                url: '/notifications.json',
+	                method: 'PUT',
 	                data: params
 	            });
 	        }
@@ -46797,18 +46808,18 @@
 	                notification = new _notificationClassJs.Notification({ state: notification });
 	            }
 
-	            this.state.queue.push(notification);
+	            this.state.queue.unshift(notification);
 	        }
 	    }, {
 	        key: '_addFakeNotifications',
 	        value: function _addFakeNotifications() {
 	            for (var i = 0; i < 3; i++) {
-	                this.state.queue.push(new _notificationClassJs.Notification({ state: {
+	                this.state.queue.unshift(new _notificationClassJs.Notification({ state: {
 	                        from: 'userManagement',
-	                        category: _notificationClassJs.Notification.CATEGORIES.INFO,
+	                        category: _notificationClassJs.Notification.getRandomProperty(_notificationClassJs.Notification.CATEGORIES),
 	                        header: 'Password expiration',
 	                        content: 'Your password expires in the next 2 days, please change it using the user management interface.',
-	                        type: _notificationClassJs.Notification.TYPES.NOTE
+	                        type: _notificationClassJs.Notification.getRandomProperty(_notificationClassJs.Notification.TYPES)
 	                    } }));
 	            }
 	        }
@@ -46932,6 +46943,14 @@
 	                ERROR: 'error'
 	            };
 	        }
+	    }, {
+	        key: 'RESPOND_BY',
+	        get: function get() {
+	            return {
+	                USER: 'user',
+	                NOTIFICATION_ENGINE: 'notification_engine'
+	            };
+	        }
 	    }]);
 
 	    return Notification;
@@ -46982,6 +47001,12 @@
 	            return this;
 	        }
 	    }], [{
+	        key: "getRandomProperty",
+	        value: function getRandomProperty(obj) {
+	            var keys = _.keys(obj);
+	            return obj[keys[keys.length * Math.random() << 0]];
+	        }
+	    }, {
 	        key: "instanceFactory",
 	        value: function instanceFactory() {
 	            return new Base();
@@ -47169,7 +47194,7 @@
 
 	var _createClass = (function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ('value' in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; })();
 
-	var _get = function get(_x4, _x5, _x6) { var _again = true; _function: while (_again) { var object = _x4, property = _x5, receiver = _x6; desc = parent = getter = undefined; _again = false; if (object === null) object = Function.prototype; var desc = Object.getOwnPropertyDescriptor(object, property); if (desc === undefined) { var parent = Object.getPrototypeOf(object); if (parent === null) { return undefined; } else { _x4 = parent; _x5 = property; _x6 = receiver; _again = true; continue _function; } } else if ('value' in desc) { return desc.value; } else { var getter = desc.get; if (getter === undefined) { return undefined; } return getter.call(receiver); } } };
+	var _get = function get(_x5, _x6, _x7) { var _again = true; _function: while (_again) { var object = _x5, property = _x6, receiver = _x7; desc = parent = getter = undefined; _again = false; if (object === null) object = Function.prototype; var desc = Object.getOwnPropertyDescriptor(object, property); if (desc === undefined) { var parent = Object.getPrototypeOf(object); if (parent === null) { return undefined; } else { _x5 = parent; _x6 = property; _x7 = receiver; _again = true; continue _function; } } else if ('value' in desc) { return desc.value; } else { var getter = desc.get; if (getter === undefined) { return undefined; } return getter.call(receiver); } } };
 
 	var _createDecoratedClass = (function () { function defineProperties(target, descriptors, initializers) { for (var i = 0; i < descriptors.length; i++) { var descriptor = descriptors[i]; var decorators = descriptor.decorators; var key = descriptor.key; delete descriptor.key; delete descriptor.decorators; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ('value' in descriptor || descriptor.initializer) descriptor.writable = true; if (decorators) { for (var f = 0; f < decorators.length; f++) { var decorator = decorators[f]; if (typeof decorator === 'function') { descriptor = decorator(target, key, descriptor) || descriptor; } else { throw new TypeError('The decorator for method ' + descriptor.key + ' is of the invalid type ' + typeof decorator); } } if (descriptor.initializer !== undefined) { initializers[key] = descriptor; continue; } } Object.defineProperty(target, key, descriptor); } } return function (Constructor, protoProps, staticProps, protoInitializers, staticInitializers) { if (protoProps) defineProperties(Constructor.prototype, protoProps, protoInitializers); if (staticProps) defineProperties(Constructor, staticProps, staticInitializers); return Constructor; }; })();
 
@@ -47244,7 +47269,20 @@
 
 	            params.notification.state.closed = true;
 	            this.injections.NotificationService.close({
-	                notification: params.notification
+	                notification: params.notification,
+	                by: params.by || _modelsNotificationClassJs.Notification.RESPOND_BY.USER
+	            });
+	        }
+	    }, {
+	        key: 'respondWith',
+	        value: function respondWith() {
+	            var params = arguments.length <= 0 || arguments[0] === undefined ? { action: null, notification: null, by: null } : arguments[0];
+
+	            params.notification.state.closed = true;
+	            this.injections.NotificationService.respondWith({
+	                notification: params.notification,
+	                action: params.action,
+	                by: params.by || _modelsNotificationClassJs.Notification.RESPOND_BY.USER
 	            });
 	        }
 	    }, {

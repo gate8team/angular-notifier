@@ -23,7 +23,9 @@
     right: 15px;
 }
 
-.notification {}
+.notification {
+    width: 300px;
+}
 
 .notification.-single {
     margin-top: 10px;

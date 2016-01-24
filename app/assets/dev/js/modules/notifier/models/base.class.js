@@ -19,6 +19,11 @@ class Base {
         return this;
     }
 
+    static getRandomProperty(obj) {
+        let keys = _.keys(obj);
+        return obj[keys[ keys.length * Math.random() << 0]];
+    }
+
     static instanceFactory() {
         return new Base();
     }

@@ -23,6 +23,13 @@ class Notification extends Base {
         };
     }
 
+    static get RESPOND_BY() {
+        return {
+            USER: 'user',
+            NOTIFICATION_ENGINE: 'notification_engine'
+        };
+    }
+
     static instanceFactory() {
         return new Notification();
     }
