@@ -16,9 +16,17 @@ class NotificationService {
     }
 
     close(params = { notification: null }) {
-        this.injections.$http({
-            url: '/xxx.json',
-            method: 'PATCH',
+        return this.injections.$http({
+            url: '/notifications.json',
+            method: 'PUT',
+            data: params
+        });
+    }
+
+    respondWith(params = { notification: null, action: null }) {
+        return this.injections.$http({
+            url: '/notifications.json',
+            method: 'PUT',
             data: params
         });
     }
@@ -30,17 +38,17 @@ class NotificationService {
             notification = new Notification({ state: notification });
         }
 
-        this.state.queue.push(notification);
+        this.state.queue.unshift(notification);
     }
 
     _addFakeNotifications() {
         for (let i = 0; i < 3; i++) {
-            this.state.queue.push(new Notification({ state: {
+            this.state.queue.unshift(new Notification({ state: {
                 from: 'userManagement',
-                category: Notification.CATEGORIES.INFO,
+                category: Notification.getRandomProperty(Notification.CATEGORIES),
                 header: 'Password expiration',
                 content: 'Your password expires in the next 2 days, please change it using the user management interface.',
-                type: Notification.TYPES.NOTE
+                type: Notification.getRandomProperty(Notification.TYPES)
             }}));
         }
     }

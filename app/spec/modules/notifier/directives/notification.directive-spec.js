@@ -10,7 +10,7 @@ describe('The NotificationDirective', () => {
         let $rootScope = _$rootScope_;
         let $compile = _$compile_;
         let $httpBackend = _$httpBackend_;
-        $httpBackend.whenPATCH('/xxx.json').respond('Mocked stuff...');
+        $httpBackend.whenPUT('/notifications.json').respond('Mocked stuff...');
         scope = $rootScope.$new();
         scope.notification = new Notification({ state: {
             from: 'userManagement',
@@ -53,6 +53,13 @@ describe('The NotificationDirective', () => {
     it('should have ability to close the notification', () => {
         scope.$digest();
         angular.element(element[0].querySelector('.close.icon')).triggerHandler('click');
+        expect(scope.notification.state.closed === true).toBeTruthy();
+    });
+
+    it('should have ability to close when respond with some action', () => {
+        scope.notification.rebuild({ state: { type: Notification.TYPES.OK_CANCEL_CONFIRM }});
+        scope.$digest();
+        angular.element(element[0].querySelector('.notification-cancel-confirm')).triggerHandler('click');
         expect(scope.notification.state.closed === true).toBeTruthy();
     });
 });
