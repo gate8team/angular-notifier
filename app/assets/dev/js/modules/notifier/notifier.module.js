@@ -36,6 +36,13 @@ notifierModule.run(['$templateCache', ($templateCache) => {
                                 {{ singleNotification.state.notification.state.header }}
                             </div>
                             <p class="notification-content">{{ singleNotification.state.notification.state.content }}</p>
+                            <p>{{ singleNotification.state.notification.state.type }}</p>
+                            <div ng-if="singleNotification.state.notification.state.type != 'note'">
+                                <button class="mini ui green button">Okay</button>
+                                <button class="mini ui red button"
+                                        ng-if="singleNotification.state.notification.state.type == 'ok_cancel_confirm'">Cancel</button>
+                                <button class="mini ui blue button">Confirm</button>
+                            </div>
                         </div>`
         },
         {

@@ -6,9 +6,11 @@ describe('The NotificationDirective', () => {
 
     beforeEach(angular.mock.module('g8.Notifier'));
 
-    beforeEach(inject(function(_$rootScope_, _$compile_) {
+    beforeEach(inject((_$rootScope_, _$compile_, _$httpBackend_) => {
         let $rootScope = _$rootScope_;
         let $compile = _$compile_;
+        let $httpBackend = _$httpBackend_;
+        $httpBackend.whenPATCH('/xxx.json').respond('Mocked stuff...');
         scope = $rootScope.$new();
         scope.notification = new Notification({ state: {
             from: 'userManagement',
@@ -29,5 +31,28 @@ describe('The NotificationDirective', () => {
     it('should display the correct header', () => {
         scope.$digest();
         expect(angular.element(element[0].querySelector('.notification-header')).text().trim()).toEqual(scope.notification.state.header);
+    });
+
+    it('should display the correct info type', () => {
+        scope.$digest();
+        expect(angular.element(element[0].querySelector('.message')).hasClass('info')).toBeTruthy();
+    });
+
+    it('should display the correct warning type', () => {
+        scope.notification.rebuild({ state: { category: Notification.CATEGORIES.WARNING }});
+        scope.$digest();
+        expect(angular.element(element[0].querySelector('.message')).hasClass('warning')).toBeTruthy();
+    });
+
+    it('should display the correct error type', () => {
+        scope.notification.rebuild({ state: { category: Notification.CATEGORIES.ERROR }});
+        scope.$digest();
+        expect(angular.element(element[0].querySelector('.message')).hasClass('negative')).toBeTruthy();
+    });
+
+    it('should have ability to close the notification', () => {
+        scope.$digest();
+        angular.element(element[0].querySelector('.close.icon')).triggerHandler('click');
+        expect(scope.notification.state.closed === true).toBeTruthy();
     });
 });

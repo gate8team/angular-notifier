@@ -18,7 +18,9 @@ class NotificationTestController extends BaseController {
                 header: null,
                 content: null,
                 type: Notification.TYPES.NOTE
-            }
+            },
+            types: Notification.TYPES,
+            categories: Notification.CATEGORIES
         };
         this._initializeInjections();
         this.$scope.notificationQueue = NotificationService.getQueue();
