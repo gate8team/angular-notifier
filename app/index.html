@@ -29,17 +29,15 @@
                 <div class="two fields">
                     <div class="field">
                         <label>Notification Type</label>
-                        <select class="ui selection dropdown" ng-model="notificationTest.state.notification.type">
-                            <option value="">1</option>
-                            <option value="">2</option>
-                        </select>
+                        <select class="ui selection dropdown"
+                                ng-options="value as value for (name, value) in notificationTest.state.types track by value"
+                                ng-model="notificationTest.state.notification.type"></select>
                     </div>
                     <div class="field">
                         <label>Notification Category</label>
-                        <select class="ui selection dropdown" ng-model="notificationTest.state.notification.category">
-                            <option value="">1</option>
-                            <option value="">2</option>
-                        </select>
+                        <select class="ui selection dropdown"
+                                ng-options="value as value for (name, value) in notificationTest.state.categories track by value"
+                                ng-model="notificationTest.state.notification.category"></select>
                     </div>
                 </div>
                 <div class="field">
