@@ -8,7 +8,7 @@ Simple Angular 1.x Notifier
     cd /blah-blah/.../project-folder/
     npm install
 
-## To make webpack process the build:
+## To make webpack processes the build:
 
     npm test (or gulp frontend-watch)
 
