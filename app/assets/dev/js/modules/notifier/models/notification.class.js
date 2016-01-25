@@ -7,6 +7,10 @@ class Notification extends Base {
         this._initializeState();
     }
 
+    /**
+     * Notification types enum.
+     * @returns {{NOTE: string, OK_CONFIRM: string, OK_CANCEL_CONFIRM: string}}
+     */
     static get TYPES() {
         return {
             NOTE: 'note',
@@ -15,6 +19,10 @@ class Notification extends Base {
         };
     }
 
+    /**
+     * Notification categories enum.
+     * @returns {{INFO: string, WARNING: string, ERROR: string}}
+     */
     static get CATEGORIES() {
         return {
             INFO: 'info',
@@ -23,6 +31,10 @@ class Notification extends Base {
         };
     }
 
+    /**
+     * Notification respond_by enum.
+     * @returns {{USER: string, NOTIFICATION_ENGINE: string}}
+     */
     static get RESPOND_BY() {
         return {
             USER: 'user',
@@ -34,7 +46,10 @@ class Notification extends Base {
         return new Notification();
     }
 
-    // private
+    /**
+     * State initialization method.
+     * @private
+     */
     _initializeState() {
         this.state = _.merge({
             id: null,

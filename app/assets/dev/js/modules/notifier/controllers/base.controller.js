@@ -3,6 +3,10 @@ class BaseController {
         this.watchers = [];
     }
 
+    /**
+     * Helps to initialize watchers on current scope passed into injections.
+     * @private
+     */
     _initializeWatchers() {
         _.each(this.watchers, (instance) => {
             if (_.isFunction(instance.watchFor)) {

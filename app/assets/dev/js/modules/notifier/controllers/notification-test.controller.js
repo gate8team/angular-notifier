@@ -26,6 +26,11 @@ class NotificationTestController extends BaseController {
         this.$scope.notificationQueue = NotificationService.getQueue();
     }
 
+    /**
+     * Form submit action.
+     * @param {object} params - contains notification that should be added.
+     * @param {object} params.notification - notification to be added to queue.
+     */
     addNotificationToQueue(params = { notification: {} }) {
         this.injections.NotificationService.addNotification({ notification: params.notification });
     }

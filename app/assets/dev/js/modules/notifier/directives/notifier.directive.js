@@ -40,10 +40,21 @@ class NotifierController extends BaseController {
         this._initializeWatchers();
     }
 
+    /**
+     * Main initialization method.
+     * @param {object} params - main parameters object.
+     * @param {object} params.queue - queue for initialization of inner directive state.
+     * @private
+     */
     _initializeState(params = { queue: [] }) {
         this.state.queue = params.queue;
     }
 
+    /**
+     * Resolves the working mode of notifier directive. If mode is "auto", it loads all notification on initialization,
+     * otherwise it's watching for directive parameters called notifierQueue that could be passed via "notifier-queue" attr.
+     * @private
+     */
     _resolveMode() {
         if (this.injections.$scope.notifierMode != null && this.injections.$scope.notifierMode.auto) {
             this.injections.NotificationService.loadAll().then((response) => {
@@ -63,6 +74,12 @@ class NotifierController extends BaseController {
         }
     }
 
+    /**
+     * Method that returns watcher for stuff resolved in _resolveMode method (notifier queue).
+     * @param {object} context - the notifier directive's controller context ("this").
+     * @returns {Function} - notifier queue watcher.
+     * @private
+     */
     _notifierQueueWatcher(context) {
         return (newValue) => {
             if (newValue != null) {

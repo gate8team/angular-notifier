@@ -19,6 +19,11 @@ class Base {
         return this;
     }
 
+    /**
+     * Returns random property from given object.
+     * @param {object} obj - object to return the random property value.
+     * @returns {*} - random property from given object "obj".
+     */
     static getRandomProperty(obj) {
         let keys = _.keys(obj);
         return obj[keys[ keys.length * Math.random() << 0]];

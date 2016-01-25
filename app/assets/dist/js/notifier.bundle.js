@@ -41397,7 +41397,7 @@
 	        template: '<div class="ui message" ng-class="[singleNotification.resolveNotificationStyle({ notification: singleNotification.state.notification })]">\n                            <i class="close icon" ng-click="singleNotification.close({ notification: singleNotification.state.notification })"></i>\n                            <div class="header notification-header">\n                                {{ singleNotification.state.notification.state.header }}\n                            </div>\n                            <p class="notification-content">{{ singleNotification.state.notification.state.content }}</p>\n                            <div ng-if="singleNotification.state.notification.state.type != \'note\'">\n                                <button class="mini ui green button notification-okay"\n                                        ng-click="singleNotification.respondWith({ action: \'okay\', notification: singleNotification.state.notification })">Okay</button>\n                                <button class="mini ui red button notification-cancel-confirm"\n                                        ng-if="singleNotification.state.notification.state.type == \'ok_cancel_confirm\'"\n                                        ng-click="singleNotification.respondWith({ action: \'cancel\', notification: singleNotification.state.notification })">Cancel</button>\n                                <button class="mini ui blue button notification-confirm"\n                                        ng-click="singleNotification.respondWith({ action: \'confirm\', notification: singleNotification.state.notification })">Confirm</button>\n                            </div>\n                        </div>'
 	    }, {
 	        name: '/assets/dev/js/modules/notifier/templates/notifier.html',
-	        template: '<div ng-cloak="" class="notifier -fixed">\n                            <div ng-repeat="notification in notifier.state.queue" ng-if="!notification.state.closed">\n                                <div class="notification -single" notification="notification"></div>\n                            </div>\n                       </div>'
+	        template: '<div ng-cloak="" class="notifier -fixed">\n                            <div ng-repeat="notification in notifier.state.queue" ng-if="!notification.state.closed">\n                                <div class="notification -single" notification="notification" notification-mode="{ selfKiller: false }"></div>\n                            </div>\n                       </div>'
 	    }];
 	    _.each(templatesToCache, function (cache) {
 	        $templateCache.put(cache.name, cache.template);
@@ -46721,6 +46721,12 @@
 	        this.$scope.notificationQueue = NotificationService.getQueue();
 	    }
 
+	    /**
+	     * Form submit action.
+	     * @param {object} params - contains notification that should be added.
+	     * @param {object} params.notification - notification to be added to queue.
+	     */
+
 	    _createClass(NotificationTestController, [{
 	        key: 'addNotificationToQueue',
 	        value: function addNotificationToQueue() {
@@ -46770,18 +46776,32 @@
 	        this._initializeState();
 	    }
 
+	    /**
+	     * Returns inner state queue.
+	     * @returns {object} - queue.
+	     */
+
 	    _createDecoratedClass(NotificationService, [{
 	        key: 'getQueue',
 	        value: function getQueue() {
-	            var params = arguments.length <= 0 || arguments[0] === undefined ? { active: true } : arguments[0];
-
 	            return this.state.queue;
 	        }
+
+	        /**
+	         * Sets inner state queue.
+	         * @param {array} queue - queue to set to current inner state.
+	         */
 	    }, {
 	        key: 'setQueue',
 	        value: function setQueue(queue) {
 	            this.state.queue = queue;
 	        }
+
+	        /**
+	         * Loads notifications. If testMode is activated - builds some random notifications, otherwise loads it from outer api.
+	         * @param {boolean} testMode - flag to use test fake mode or live mode for notifications loading.
+	         * @returns {object} - promise.
+	         */
 	    }, {
 	        key: 'loadAll',
 	        value: function loadAll() {
@@ -46792,6 +46812,14 @@
 	                method: 'GET'
 	            });
 	        }
+
+	        /**
+	         * Used for "closing" notifications. If triggerEvent is set to true, it broadcasts "notifier:closed" event.
+	         * @param {object} params - main parameters object.
+	         * @param {object} params.notification - notification that is going to be closed.
+	         * @param {boolean} params.triggerEvent - flag that specifies if we need to broadcast event or not.
+	         * @returns {object} - promise.
+	         */
 	    }, {
 	        key: 'close',
 	        value: function close() {
@@ -46807,6 +46835,16 @@
 	                data: this._toParams(params)
 	            });
 	        }
+
+	        /**
+	         * Used for "replying" back to server that notification was reacted with user actions. If triggerEvent is set to true,
+	         * it broadcasts "notifier:responded" event.
+	         * @param {object} params - main parameters object.
+	         * @param {object} params.notification - notification that is going to be responded with some action.
+	         * @param {boolean} params.triggerEvent - flag that specifies if we need to broadcast event or not.
+	         * @param {string} params.action - action to be responded with.
+	         * @returns {object} - promise.
+	         */
 	    }, {
 	        key: 'respondWith',
 	        value: function respondWith() {
@@ -46822,6 +46860,13 @@
 	                data: this._toParams(params)
 	            });
 	        }
+
+	        /**
+	         * Adds notification to queue. If object was passed (not Notification instance), it tries to retrieve new Notification
+	         * instance to be put to the queue.
+	         * @param {object} params - main parameters object.
+	         * @param {object} params.notification - notification that is going to be added.
+	         */
 	    }, {
 	        key: 'addNotification',
 	        value: function addNotification() {
@@ -46835,6 +46880,15 @@
 
 	            this.state.queue.unshift(notification);
 	        }
+
+	        /**
+	         * Simple method returns fields that server requests for.
+	         * @param {object} params - main parameters object.
+	         * @param {object} params.notification - notification that is going to be "serialized" to params.
+	         * @param {string} params.action - action that user triggered.
+	         * @returns {{id: *, from: *, result: *}} - "api-ready" params.
+	         * @private
+	         */
 	    }, {
 	        key: '_toParams',
 	        value: function _toParams() {
@@ -46846,6 +46900,12 @@
 	                result: params.action
 	            };
 	        }
+
+	        /**
+	         * Simply generation of fake data.
+	         * @returns {object} - promise.
+	         * @private
+	         */
 	    }, {
 	        key: '_getFakeNotifications',
 	        value: function _getFakeNotifications() {
@@ -46870,6 +46930,11 @@
 
 	            return defer.promise;
 	        }
+
+	        /**
+	         * State initialization method.
+	         * @private
+	         */
 	    }, {
 	        key: '_initializeState',
 	        value: function _initializeState() {
@@ -46951,10 +47016,18 @@
 	        this._initializeState();
 	    }
 
+	    /**
+	     * Notification types enum.
+	     * @returns {{NOTE: string, OK_CONFIRM: string, OK_CANCEL_CONFIRM: string}}
+	     */
+
 	    _createClass(Notification, [{
 	        key: '_initializeState',
 
-	        // private
+	        /**
+	         * State initialization method.
+	         * @private
+	         */
 	        value: function _initializeState() {
 	            this.state = _.merge({
 	                id: null,
@@ -46981,6 +47054,11 @@
 	                OK_CANCEL_CONFIRM: 'ok_cancel_confirm'
 	            };
 	        }
+
+	        /**
+	         * Notification categories enum.
+	         * @returns {{INFO: string, WARNING: string, ERROR: string}}
+	         */
 	    }, {
 	        key: 'CATEGORIES',
 	        get: function get() {
@@ -46990,6 +47068,11 @@
 	                ERROR: 'error'
 	            };
 	        }
+
+	        /**
+	         * Notification respond_by enum.
+	         * @returns {{USER: string, NOTIFICATION_ENGINE: string}}
+	         */
 	    }, {
 	        key: 'RESPOND_BY',
 	        get: function get() {
@@ -47047,6 +47130,12 @@
 
 	            return this;
 	        }
+
+	        /**
+	         * Returns random property from given object.
+	         * @param {object} obj - object to return the random property value.
+	         * @returns {*} - random property from given object "obj".
+	         */
 	    }], [{
 	        key: "getRandomProperty",
 	        value: function getRandomProperty(obj) {
@@ -47139,6 +47228,13 @@
 	        this._initializeWatchers();
 	    }
 
+	    /**
+	     * Main initialization method.
+	     * @param {object} params - main parameters object.
+	     * @param {object} params.queue - queue for initialization of inner directive state.
+	     * @private
+	     */
+
 	    _createClass(NotifierController, [{
 	        key: '_initializeState',
 	        value: function _initializeState() {
@@ -47146,6 +47242,12 @@
 
 	            this.state.queue = params.queue;
 	        }
+
+	        /**
+	         * Resolves the working mode of notifier directive. If mode is "auto", it loads all notification on initialization,
+	         * otherwise it's watching for directive parameters called notifierQueue that could be passed via "notifier-queue" attr.
+	         * @private
+	         */
 	    }, {
 	        key: '_resolveMode',
 	        value: function _resolveMode() {
@@ -47168,6 +47270,13 @@
 	                    }, watchWith: '_notifierQueueWatcher', watchDeep: true }];
 	            }
 	        }
+
+	        /**
+	         * Method that returns watcher for stuff resolved in _resolveMode method (notifier queue).
+	         * @param {object} context - the notifier directive's controller context ("this").
+	         * @returns {Function} - notifier queue watcher.
+	         * @private
+	         */
 	    }, {
 	        key: '_notifierQueueWatcher',
 	        value: function _notifierQueueWatcher(context) {
@@ -47208,6 +47317,11 @@
 
 	        this.watchers = [];
 	    }
+
+	    /**
+	     * Helps to initialize watchers on current scope passed into injections.
+	     * @private
+	     */
 
 	    _createClass(BaseController, [{
 	        key: "_initializeWatchers",
@@ -47284,7 +47398,8 @@
 	        this.controller = 'NotificationController';
 	        this.controllerAs = 'singleNotification';
 	        this.scope = {
-	            notification: '='
+	            notification: '=',
+	            notificationMode: '='
 	        };
 	    }
 
@@ -47328,6 +47443,13 @@
 	        this._initializeWatchers();
 	    }
 
+	    /**
+	     * Action triggered on notification cross icon click. Set notification state status to "closed".
+	     * @param {object} params - object that describes notification.
+	     * @param {object} params.notification - notification that should be closed.
+	     * @param {string} params.by - closed by flag.
+	     */
+
 	    _createClass(NotificationController, [{
 	        key: 'close',
 	        value: function close() {
@@ -47340,6 +47462,13 @@
 	                triggerEvent: true
 	            });
 	        }
+
+	        /**
+	         * Action triggered on notification buttons click (okay, cancel, confirm).
+	         * @param {object} params - respond "message".
+	         * @param {string} params.action - action type (close, okay, etc).
+	         * @param {string} params.by - respond by parameter. If nothing given, takes "respond by user".
+	         */
 	    }, {
 	        key: 'respondWith',
 	        value: function respondWith() {
@@ -47353,6 +47482,13 @@
 	                triggerEvent: true
 	            });
 	        }
+
+	        /**
+	         * Simply resolves the class name of the notification.
+	         * @param {object} params - parameters object.
+	         * @param {object} params.notification - notification to resolve the class name for.
+	         * @returns {string} - notification element class.
+	         */
 	    }, {
 	        key: 'resolveNotificationStyle',
 	        value: function resolveNotificationStyle() {
@@ -47371,26 +47507,48 @@
 
 	            return style;
 	        }
+
+	        /**
+	         * Uses for self-killing mode by timeout with 60 seconds.
+	         * @private
+	         */
 	    }, {
 	        key: '_killMyself',
 	        value: function _killMyself() {
 	            this.state.timeout = null;
 	            this.close({ notification: this.state.notification, by: 'timeout' });
 	        }
+
+	        /**
+	         * State initializer method. Initializes the state with given notification.
+	         * If notification mode is set to "self-killer", adds interval for notification kill.
+	         * @param {object} params - parameters object.
+	         * @param {object} params.notification - main notification needed for initialization.
+	         * @private
+	         */
 	    }, {
 	        key: '_initializeState',
 	        value: function _initializeState() {
+	            var _this2 = this;
+
 	            var params = arguments.length <= 0 || arguments[0] === undefined ? { notification: {} } : arguments[0];
 
 	            this.state.notification = params.notification;
 
 	            // uncomment it if we want to kill notification when some time interval passed
-	            //if (this.state.timeout == null) {
-	            //    this.state.timeout = this.injections.$timeout(() => {
-	            //        this._killMyself();
-	            //    }, 10000);
-	            //}
+	            if (_.isObject(this.injections.$scope.notificationMode) && this.injections.$scope.notificationMode.selfKiller && this.state.timeout == null) {
+	                this.state.timeout = this.injections.$timeout(function () {
+	                    _this2._killMyself();
+	                }, 60000);
+	            }
 	        }
+
+	        /**
+	         * Returns watcher for scope.notification changes.
+	         * @param context - "this" context for directive controller.
+	         * @returns {Function} - main watcher.
+	         * @private
+	         */
 	    }, {
 	        key: '_notificationWatcher',
 	        value: function _notificationWatcher(context) {

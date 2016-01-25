@@ -10,7 +10,8 @@ class NotificationDirective {
         this.controller = 'NotificationController';
         this.controllerAs = 'singleNotification';
         this.scope = {
-            notification: '='
+            notification: '=',
+            notificationMode: '='
         };
     }
 
@@ -44,6 +45,12 @@ class NotificationController extends BaseController {
         this._initializeWatchers();
     }
 
+    /**
+     * Action triggered on notification cross icon click. Set notification state status to "closed".
+     * @param {object} params - object that describes notification.
+     * @param {object} params.notification - notification that should be closed.
+     * @param {string} params.by - closed by flag.
+     */
     close(params = { notification: null, by: 'user' }) {
         params.notification.state.closed = true;
         this.injections.NotificationService.close({
@@ -53,6 +60,12 @@ class NotificationController extends BaseController {
         });
     }
 
+    /**
+     * Action triggered on notification buttons click (okay, cancel, confirm).
+     * @param {object} params - respond "message".
+     * @param {string} params.action - action type (close, okay, etc).
+     * @param {string} params.by - respond by parameter. If nothing given, takes "respond by user".
+     */
     respondWith(params = { action: null, notification: null, by: null }) {
         params.notification.state.closed = true;
         this.injections.NotificationService.respondWith({
@@ -63,7 +76,13 @@ class NotificationController extends BaseController {
         });
     }
 
-    resolveNotificationStyle(params = { notification : null}) {
+    /**
+     * Simply resolves the class name of the notification.
+     * @param {object} params - parameters object.
+     * @param {object} params.notification - notification to resolve the class name for.
+     * @returns {string} - notification element class.
+     */
+    resolveNotificationStyle(params = { notification: null }) {
         let style = 'floating';
         let notificationCategory = (params.notification.state || {}).category;
 
@@ -78,22 +97,39 @@ class NotificationController extends BaseController {
         return style;
     }
 
+    /**
+     * Uses for self-killing mode by timeout with 60 seconds.
+     * @private
+     */
     _killMyself() {
         this.state.timeout = null;
         this.close({ notification: this.state.notification, by: 'timeout' });
     }
 
+    /**
+     * State initializer method. Initializes the state with given notification.
+     * If notification mode is set to "self-killer", adds interval for notification kill.
+     * @param {object} params - parameters object.
+     * @param {object} params.notification - main notification needed for initialization.
+     * @private
+     */
     _initializeState(params = { notification: {} }) {
         this.state.notification = params.notification;
 
         // uncomment it if we want to kill notification when some time interval passed
-        //if (this.state.timeout == null) {
-        //    this.state.timeout = this.injections.$timeout(() => {
-        //        this._killMyself();
-        //    }, 10000);
-        //}
+        if (_.isObject(this.injections.$scope.notificationMode) && this.injections.$scope.notificationMode.selfKiller && this.state.timeout == null) {
+            this.state.timeout = this.injections.$timeout(() => {
+                this._killMyself();
+            }, 60000);
+        }
     }
 
+    /**
+     * Returns watcher for scope.notification changes.
+     * @param context - "this" context for directive controller.
+     * @returns {Function} - main watcher.
+     * @private
+     */
     _notificationWatcher(context) {
         return (newValue) => {
             if (newValue != null) {

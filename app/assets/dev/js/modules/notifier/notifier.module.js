@@ -51,7 +51,7 @@ notifierModule.run(['$templateCache', ($templateCache) => {
             name: '/assets/dev/js/modules/notifier/templates/notifier.html',
             template: `<div ng-cloak="" class="notifier -fixed">
                             <div ng-repeat="notification in notifier.state.queue" ng-if="!notification.state.closed">
-                                <div class="notification -single" notification="notification"></div>
+                                <div class="notification -single" notification="notification" notification-mode="{ selfKiller: false }"></div>
                             </div>
                        </div>`
         }
