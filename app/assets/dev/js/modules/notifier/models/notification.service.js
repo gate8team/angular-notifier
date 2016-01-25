@@ -2,11 +2,12 @@ import { Inject } from '../decorators/main.decorator.js';
 import { Notification } from './notification.class.js';
 
 class NotificationService {
-    constructor($http, $q, $timeout) {
+    constructor($http, $q, $timeout, $rootScope) {
         this.injections = {
             $http: $http,
             $q: $q,
-            $timeout: $timeout
+            $timeout: $timeout,
+            $rootScope: $rootScope
         };
 
         this._initializeState();
@@ -23,7 +24,11 @@ class NotificationService {
         });
     }
 
-    close(params = { notification: null }) {
+    close(params = { notification: null, triggerEvent: true }) {
+        if (params.triggerEvent) {
+            this.injections.$rootScope.$broadcast('notifier:closed', { notification: params.notification });
+        }
+
         return this.injections.$http({
             url: '/api/notification/confirm',
             method: 'PUT',
@@ -31,7 +36,11 @@ class NotificationService {
         });
     }
 
-    respondWith(params = { notification: null, action: null }) {
+    respondWith(params = { notification: null, action: null, triggerEvent: true }) {
+        if (params.triggerEvent) {
+            this.injections.$rootScope.$broadcast('notifier:responded', { notification: params.notification });
+        }
+
         return this.injections.$http({
             url: '/api/notification/confirm',
             method: 'PUT',
@@ -86,9 +95,9 @@ class NotificationService {
         }, this.state || {});
     }
 
-    @Inject('$http', '$q', '$timeout')
-    static instanceFactory($http, $q, $timeout) {
-        return new NotificationService($http, $q, $timeout);
+    @Inject('$http', '$q', '$timeout', '$rootScope')
+    static instanceFactory($http, $q, $timeout, $rootScope) {
+        return new NotificationService($http, $q, $timeout, $rootScope);
     }
 }
 

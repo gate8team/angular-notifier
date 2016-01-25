@@ -46757,13 +46757,14 @@
 	var _notificationClassJs = __webpack_require__(199);
 
 	var NotificationService = (function () {
-	    function NotificationService($http, $q, $timeout) {
+	    function NotificationService($http, $q, $timeout, $rootScope) {
 	        _classCallCheck(this, NotificationService);
 
 	        this.injections = {
 	            $http: $http,
 	            $q: $q,
-	            $timeout: $timeout
+	            $timeout: $timeout,
+	            $rootScope: $rootScope
 	        };
 
 	        this._initializeState();
@@ -46789,7 +46790,11 @@
 	    }, {
 	        key: 'close',
 	        value: function close() {
-	            var params = arguments.length <= 0 || arguments[0] === undefined ? { notification: null } : arguments[0];
+	            var params = arguments.length <= 0 || arguments[0] === undefined ? { notification: null, triggerEvent: true } : arguments[0];
+
+	            if (params.triggerEvent) {
+	                this.injections.$rootScope.$broadcast('notifier:closed', { notification: params.notification });
+	            }
 
 	            return this.injections.$http({
 	                url: '/api/notification/confirm',
@@ -46800,7 +46805,11 @@
 	    }, {
 	        key: 'respondWith',
 	        value: function respondWith() {
-	            var params = arguments.length <= 0 || arguments[0] === undefined ? { notification: null, action: null } : arguments[0];
+	            var params = arguments.length <= 0 || arguments[0] === undefined ? { notification: null, action: null, triggerEvent: true } : arguments[0];
+
+	            if (params.triggerEvent) {
+	                this.injections.$rootScope.$broadcast('notifier:responded', { notification: params.notification });
+	            }
 
 	            return this.injections.$http({
 	                url: '/api/notification/confirm',
@@ -46865,9 +46874,9 @@
 	        }
 	    }], [{
 	        key: 'instanceFactory',
-	        decorators: [(0, _decoratorsMainDecoratorJs.Inject)('$http', '$q', '$timeout')],
-	        value: function instanceFactory($http, $q, $timeout) {
-	            return new NotificationService($http, $q, $timeout);
+	        decorators: [(0, _decoratorsMainDecoratorJs.Inject)('$http', '$q', '$timeout', '$rootScope')],
+	        value: function instanceFactory($http, $q, $timeout, $rootScope) {
+	            return new NotificationService($http, $q, $timeout, $rootScope);
 	        }
 	    }]);
 
@@ -47143,6 +47152,10 @@
 	                }, function (response) {
 	                    _this.injections.$log.warn(response);
 	                });
+
+	                this.watchers = [{ watchFor: function watchFor() {
+	                        return _this.injections.NotificationService.getQueue();
+	                    }, watchWith: '_notifierQueueWatcher', watchDeep: true }];
 	            } else {
 	                this.watchers = [{ watchFor: function watchFor() {
 	                        return _this.injections.$scope.notifierQueue;
@@ -47317,7 +47330,8 @@
 	            params.notification.state.closed = true;
 	            this.injections.NotificationService.close({
 	                notification: params.notification,
-	                by: params.by || _modelsNotificationClassJs.Notification.RESPOND_BY.USER
+	                by: params.by || _modelsNotificationClassJs.Notification.RESPOND_BY.USER,
+	                triggerEvent: true
 	            });
 	        }
 	    }, {
@@ -47329,7 +47343,8 @@
 	            this.injections.NotificationService.respondWith({
 	                notification: params.notification,
 	                action: params.action,
-	                by: params.by || _modelsNotificationClassJs.Notification.RESPOND_BY.USER
+	                by: params.by || _modelsNotificationClassJs.Notification.RESPOND_BY.USER,
+	                triggerEvent: true
 	            });
 	        }
 	    }, {

@@ -51,6 +51,10 @@ class NotifierController extends BaseController {
             }, (response) => {
                 this.injections.$log.warn(response);
             });
+
+            this.watchers = [
+                { watchFor: () => { return this.injections.NotificationService.getQueue(); }, watchWith: '_notifierQueueWatcher', watchDeep: true }
+            ];
         } else {
             this.watchers = [
                 { watchFor: () => { return this.injections.$scope.notifierQueue; }, watchWith: '_notifierQueueWatcher', watchDeep: true }

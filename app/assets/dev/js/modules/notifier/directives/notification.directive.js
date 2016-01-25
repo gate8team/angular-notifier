@@ -48,7 +48,8 @@ class NotificationController extends BaseController {
         params.notification.state.closed = true;
         this.injections.NotificationService.close({
             notification: params.notification,
-            by: params.by || Notification.RESPOND_BY.USER
+            by: params.by || Notification.RESPOND_BY.USER,
+            triggerEvent: true
         });
     }
 
@@ -57,7 +58,8 @@ class NotificationController extends BaseController {
         this.injections.NotificationService.respondWith({
             notification: params.notification,
             action: params.action,
-            by: params.by || Notification.RESPOND_BY.USER
+            by: params.by || Notification.RESPOND_BY.USER,
+            triggerEvent: true
         });
     }
 
