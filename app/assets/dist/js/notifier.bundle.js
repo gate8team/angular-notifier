@@ -46757,15 +46757,16 @@
 	var _notificationClassJs = __webpack_require__(199);
 
 	var NotificationService = (function () {
-	    function NotificationService($http) {
+	    function NotificationService($http, $q, $timeout) {
 	        _classCallCheck(this, NotificationService);
 
 	        this.injections = {
-	            $http: $http
+	            $http: $http,
+	            $q: $q,
+	            $timeout: $timeout
 	        };
 
 	        this._initializeState();
-	        this._addFakeNotifications();
 	    }
 
 	    _createDecoratedClass(NotificationService, [{
@@ -46776,14 +46777,24 @@
 	            return this.state.queue;
 	        }
 	    }, {
+	        key: 'loadAll',
+	        value: function loadAll() {
+	            var testMode = arguments.length <= 0 || arguments[0] === undefined ? true : arguments[0];
+
+	            return testMode ? this._getFakeNotifications() : this.injections.$http({
+	                url: '/api/notification/list',
+	                method: 'GET'
+	            });
+	        }
+	    }, {
 	        key: 'close',
 	        value: function close() {
 	            var params = arguments.length <= 0 || arguments[0] === undefined ? { notification: null } : arguments[0];
 
 	            return this.injections.$http({
-	                url: '/notifications.json',
+	                url: '/api/notification/confirm',
 	                method: 'PUT',
-	                data: params
+	                data: this._toParams(params)
 	            });
 	        }
 	    }, {
@@ -46792,9 +46803,9 @@
 	            var params = arguments.length <= 0 || arguments[0] === undefined ? { notification: null, action: null } : arguments[0];
 
 	            return this.injections.$http({
-	                url: '/notifications.json',
+	                url: '/api/notification/confirm',
 	                method: 'PUT',
-	                data: params
+	                data: this._toParams(params)
 	            });
 	        }
 	    }, {
@@ -46811,17 +46822,39 @@
 	            this.state.queue.unshift(notification);
 	        }
 	    }, {
-	        key: '_addFakeNotifications',
-	        value: function _addFakeNotifications() {
-	            for (var i = 0; i < 3; i++) {
-	                this.state.queue.unshift(new _notificationClassJs.Notification({ state: {
-	                        from: 'userManagement',
-	                        category: _notificationClassJs.Notification.getRandomProperty(_notificationClassJs.Notification.CATEGORIES),
-	                        header: 'Password expiration',
-	                        content: 'Your password expires in the next 2 days, please change it using the user management interface.',
-	                        type: _notificationClassJs.Notification.getRandomProperty(_notificationClassJs.Notification.TYPES)
-	                    } }));
-	            }
+	        key: '_toParams',
+	        value: function _toParams() {
+	            var params = arguments.length <= 0 || arguments[0] === undefined ? { notification: null, action: null } : arguments[0];
+
+	            return {
+	                id: params.notification.state.id,
+	                from: params.notification.state.from,
+	                result: params.action
+	            };
+	        }
+	    }, {
+	        key: '_getFakeNotifications',
+	        value: function _getFakeNotifications() {
+	            var defer = this.injections.$q.defer();
+
+	            this.injections.$timeout(function () {
+	                var fakeQueue = [];
+
+	                for (var i = 0; i < 3; i++) {
+	                    fakeQueue.unshift(new _notificationClassJs.Notification({ state: {
+	                            id: i + 1,
+	                            from: 'userManagement',
+	                            category: _notificationClassJs.Notification.getRandomProperty(_notificationClassJs.Notification.CATEGORIES),
+	                            header: 'Password expiration',
+	                            content: 'Your password expires in the next 2 days, please change it using the user management interface.',
+	                            type: _notificationClassJs.Notification.getRandomProperty(_notificationClassJs.Notification.TYPES)
+	                        } }));
+	                }
+
+	                defer.resolve({ data: fakeQueue });
+	            }, 0);
+
+	            return defer.promise;
 	        }
 	    }, {
 	        key: '_initializeState',
@@ -46832,9 +46865,9 @@
 	        }
 	    }], [{
 	        key: 'instanceFactory',
-	        decorators: [(0, _decoratorsMainDecoratorJs.Inject)('$http')],
-	        value: function instanceFactory($http) {
-	            return new NotificationService($http);
+	        decorators: [(0, _decoratorsMainDecoratorJs.Inject)('$http', '$q', '$timeout')],
+	        value: function instanceFactory($http, $q, $timeout) {
+	            return new NotificationService($http, $q, $timeout);
 	        }
 	    }]);
 
@@ -47053,7 +47086,8 @@
 	        this.controller = 'NotifierController';
 	        this.controllerAs = 'notifier';
 	        this.scope = {
-	            notifierQueue: '='
+	            notifierQueue: '=',
+	            notifierMode: '='
 	        };
 	    }
 
@@ -47072,9 +47106,7 @@
 	var NotifierController = (function (_BaseController) {
 	    _inherits(NotifierController, _BaseController);
 
-	    function NotifierController($scope, $log, $parse) {
-	        var _this = this;
-
+	    function NotifierController($scope, $log, $parse, NotificationService) {
 	        _classCallCheck(this, _NotifierController);
 
 	        _get(Object.getPrototypeOf(_NotifierController.prototype), 'constructor', this).call(this);
@@ -47082,15 +47114,13 @@
 	        this.injections = {
 	            $scope: $scope,
 	            $log: $log,
-	            $parse: $parse
+	            $parse: $parse,
+	            NotificationService: NotificationService
 	        };
 
 	        this.state = { queue: [] };
 
-	        this.watchers = [{ watchFor: function watchFor() {
-	                return _this.injections.$scope.notifierQueue;
-	            }, watchWith: '_notifierQueueWatcher', watchDeep: true }];
-
+	        this._resolveMode();
 	        this._initializeState();
 	        this._initializeWatchers();
 	    }
@@ -47101,6 +47131,23 @@
 	            var params = arguments.length <= 0 || arguments[0] === undefined ? { queue: [] } : arguments[0];
 
 	            this.state.queue = params.queue;
+	        }
+	    }, {
+	        key: '_resolveMode',
+	        value: function _resolveMode() {
+	            var _this = this;
+
+	            if (this.injections.$scope.notifierMode != null && this.injections.$scope.notifierMode.auto) {
+	                this.injections.NotificationService.loadAll().then(function (response) {
+	                    _this._initializeState({ queue: response.data });
+	                }, function (response) {
+	                    _this.injections.$log.warn(response);
+	                });
+	            } else {
+	                this.watchers = [{ watchFor: function watchFor() {
+	                        return _this.injections.$scope.notifierQueue;
+	                    }, watchWith: '_notifierQueueWatcher', watchDeep: true }];
+	            }
 	        }
 	    }, {
 	        key: '_notifierQueueWatcher',
@@ -47114,7 +47161,7 @@
 	    }]);
 
 	    var _NotifierController = NotifierController;
-	    NotifierController = (0, _decoratorsMainDecoratorJs.Inject)('$scope', '$log', '$parse')(NotifierController) || NotifierController;
+	    NotifierController = (0, _decoratorsMainDecoratorJs.Inject)('$scope', '$log', '$parse', 'NotificationService')(NotifierController) || NotifierController;
 	    return NotifierController;
 	})(_controllersBaseControllerJs.BaseController);
 

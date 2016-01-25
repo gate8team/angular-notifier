@@ -9,7 +9,8 @@ class NotifierDirective {
         this.controller = 'NotifierController';
         this.controllerAs = 'notifier';
         this.scope = {
-            notifierQueue: '='
+            notifierQueue: '=',
+            notifierMode: '='
         };
     }
 
@@ -20,29 +21,41 @@ class NotifierDirective {
     }
 }
 
-@Inject('$scope', '$log', '$parse')
+@Inject('$scope', '$log', '$parse', 'NotificationService')
 class NotifierController extends BaseController {
-    constructor($scope, $log, $parse) {
+    constructor($scope, $log, $parse, NotificationService) {
         super();
 
         this.injections = {
             $scope: $scope,
             $log: $log,
-            $parse: $parse
+            $parse: $parse,
+            NotificationService: NotificationService
         };
 
         this.state = { queue: [] };
 
-        this.watchers = [
-            { watchFor: () => { return this.injections.$scope.notifierQueue; }, watchWith: '_notifierQueueWatcher', watchDeep: true }
-        ];
-
+        this._resolveMode();
         this._initializeState();
         this._initializeWatchers();
     }
 
     _initializeState(params = { queue: [] }) {
         this.state.queue = params.queue;
+    }
+
+    _resolveMode() {
+        if (this.injections.$scope.notifierMode != null && this.injections.$scope.notifierMode.auto) {
+            this.injections.NotificationService.loadAll().then((response) => {
+                this._initializeState({ queue: response.data });
+            }, (response) => {
+                this.injections.$log.warn(response);
+            });
+        } else {
+            this.watchers = [
+                { watchFor: () => { return this.injections.$scope.notifierQueue; }, watchWith: '_notifierQueueWatcher', watchDeep: true }
+            ];
+        }
     }
 
     _notifierQueueWatcher(context) {

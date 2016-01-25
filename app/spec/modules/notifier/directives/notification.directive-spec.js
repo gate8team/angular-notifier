@@ -10,7 +10,7 @@ describe('The NotificationDirective', () => {
         let $rootScope = _$rootScope_;
         let $compile = _$compile_;
         let $httpBackend = _$httpBackend_;
-        $httpBackend.whenPUT('/notifications.json').respond('Mocked stuff...');
+        $httpBackend.whenPUT('/api/notification/confirm').respond('Mocked stuff...');
         scope = $rootScope.$new();
         scope.notification = new Notification({ state: {
             from: 'userManagement',

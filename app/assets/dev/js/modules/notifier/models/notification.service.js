@@ -2,32 +2,40 @@ import { Inject } from '../decorators/main.decorator.js';
 import { Notification } from './notification.class.js';
 
 class NotificationService {
-    constructor($http) {
+    constructor($http, $q, $timeout) {
         this.injections = {
-            $http: $http
+            $http: $http,
+            $q: $q,
+            $timeout: $timeout
         };
 
         this._initializeState();
-        this._addFakeNotifications();
     }
 
     getQueue(params = { active: true }) {
         return this.state.queue;
     }
 
+    loadAll(testMode = true) {
+        return testMode ? this._getFakeNotifications() : this.injections.$http({
+            url: '/api/notification/list',
+            method: 'GET'
+        });
+    }
+
     close(params = { notification: null }) {
         return this.injections.$http({
-            url: '/notifications.json',
+            url: '/api/notification/confirm',
             method: 'PUT',
-            data: params
+            data: this._toParams(params)
         });
     }
 
     respondWith(params = { notification: null, action: null }) {
         return this.injections.$http({
-            url: '/notifications.json',
+            url: '/api/notification/confirm',
             method: 'PUT',
-            data: params
+            data: this._toParams(params)
         });
     }
 
@@ -41,16 +49,35 @@ class NotificationService {
         this.state.queue.unshift(notification);
     }
 
-    _addFakeNotifications() {
-        for (let i = 0; i < 3; i++) {
-            this.state.queue.unshift(new Notification({ state: {
-                from: 'userManagement',
-                category: Notification.getRandomProperty(Notification.CATEGORIES),
-                header: 'Password expiration',
-                content: 'Your password expires in the next 2 days, please change it using the user management interface.',
-                type: Notification.getRandomProperty(Notification.TYPES)
-            }}));
-        }
+    _toParams(params = { notification: null, action: null }) {
+        return {
+            id: params.notification.state.id,
+            from: params.notification.state.from,
+            result: params.action
+        };
+    }
+
+    _getFakeNotifications() {
+        let defer = this.injections.$q.defer();
+
+        this.injections.$timeout(() => {
+            let fakeQueue = [];
+
+            for (let i = 0; i < 3; i++) {
+                fakeQueue.unshift(new Notification({ state: {
+                    id: (i + 1),
+                    from: 'userManagement',
+                    category: Notification.getRandomProperty(Notification.CATEGORIES),
+                    header: 'Password expiration',
+                    content: 'Your password expires in the next 2 days, please change it using the user management interface.',
+                    type: Notification.getRandomProperty(Notification.TYPES)
+                }}));
+            }
+
+            defer.resolve({ data: fakeQueue });
+        }, 0);
+
+        return defer.promise;
     }
 
     _initializeState() {
@@ -59,9 +86,9 @@ class NotificationService {
         }, this.state || {});
     }
 
-    @Inject('$http')
-    static instanceFactory($http) {
-        return new NotificationService($http);
+    @Inject('$http', '$q', '$timeout')
+    static instanceFactory($http, $q, $timeout) {
+        return new NotificationService($http, $q, $timeout);
     }
 }
 
