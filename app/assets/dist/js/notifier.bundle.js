@@ -46778,6 +46778,11 @@
 	            return this.state.queue;
 	        }
 	    }, {
+	        key: 'setQueue',
+	        value: function setQueue(queue) {
+	            this.state.queue = queue;
+	        }
+	    }, {
 	        key: 'loadAll',
 	        value: function loadAll() {
 	            var testMode = arguments.length <= 0 || arguments[0] === undefined ? true : arguments[0];
@@ -46825,7 +46830,7 @@
 	            var notification = params.notification;
 
 	            if (!(params.notification instanceof _notificationClassJs.Notification)) {
-	                notification = new _notificationClassJs.Notification({ state: notification });
+	                notification = new _notificationClassJs.Notification({ state: _.merge(notification, { id: +new Date() }) });
 	            }
 
 	            this.state.queue.unshift(notification);
@@ -47148,6 +47153,7 @@
 
 	            if (this.injections.$scope.notifierMode != null && this.injections.$scope.notifierMode.auto) {
 	                this.injections.NotificationService.loadAll().then(function (response) {
+	                    _this.injections.NotificationService.setQueue(response.data);
 	                    _this._initializeState({ queue: response.data });
 	                }, function (response) {
 	                    _this.injections.$log.warn(response);

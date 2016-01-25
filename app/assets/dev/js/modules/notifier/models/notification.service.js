@@ -17,6 +17,10 @@ class NotificationService {
         return this.state.queue;
     }
 
+    setQueue(queue) {
+        this.state.queue = queue;
+    }
+
     loadAll(testMode = true) {
         return testMode ? this._getFakeNotifications() : this.injections.$http({
             url: '/api/notification/list',
@@ -52,7 +56,7 @@ class NotificationService {
         let notification = params.notification;
 
         if (!(params.notification instanceof Notification)) {
-            notification = new Notification({ state: notification });
+            notification = new Notification({ state: _.merge(notification, { id: +new Date() }) });
         }
 
         this.state.queue.unshift(notification);

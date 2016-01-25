@@ -47,6 +47,7 @@ class NotifierController extends BaseController {
     _resolveMode() {
         if (this.injections.$scope.notifierMode != null && this.injections.$scope.notifierMode.auto) {
             this.injections.NotificationService.loadAll().then((response) => {
+                this.injections.NotificationService.setQueue(response.data);
                 this._initializeState({ queue: response.data });
             }, (response) => {
                 this.injections.$log.warn(response);
